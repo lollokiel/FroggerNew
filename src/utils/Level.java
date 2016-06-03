@@ -23,6 +23,8 @@ public class Level {
 	private Settings 					settings 	= new Settings();
 	
 	public Game gameframe;
+	
+	
 	public Level(String sPathBackgroundStructure, String sPathObjects, Game gameframe) {
 		
 		this.gameframe = gameframe;

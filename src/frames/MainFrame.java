@@ -23,7 +23,8 @@ import com.jgoodies.forms.layout.RowSpec;
 
 import objects.Figure;
 import objects.Player;
-import utils.*;
+import settings.Settings;
+import utils.HighscoreTableModel;
 
 
 
@@ -199,11 +200,11 @@ public class MainFrame extends JFrame{
 		
 		
 		figure = new JComboBox<Figure>();
-		figure.addItem(new Figure("Frosch"));
-		figure.addItem(new Figure("Huhn"));
-		figure.addItem(new Figure("Känguru"));
-		figure.addItem(new Figure("Schildkröte"));
-		figure.addItem(new Figure("Käfer"));
+		figure.addItem(new Figure("Frosch",settings.FROG));
+//		figure.addItem(new Figure("Huhn"));
+//		figure.addItem(new Figure("Kï¿½nguru"));
+//		figure.addItem(new Figure("Schildkrï¿½te"));
+//		figure.addItem(new Figure("Kï¿½fer"));
 
 
 		

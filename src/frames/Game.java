@@ -21,18 +21,20 @@ import utils.Utils;
 
 public class Game extends JFrame {
 
-	public Level level;
+	public int level;
 	public MainFrame mainframe;
-	private static final long serialVersionUID = 1L;
-	private int playedSeconds = 0;
-	public Playground playground;
-	public JLabel gametimer;
-	public Figure figure;
 	private Game gameFrame;
+	public Playground playground;
+	
+	public Figure figure;
+	
+	public JLabel gametimer;
 
+	private int playedSeconds = 0;
+	
 	public Game(int levelNum, Figure figure, MainFrame frameFrogger) {
 		
-		this.level = new Level("/level/backgroundStructure/"+levelNum+".txt", "/level/objectStructure/"+levelNum+".txt", this);
+		this.level = levelNum;
 		this.mainframe = frameFrogger;
 		this.figure = figure;
 		this.gameFrame = this;
@@ -49,7 +51,6 @@ public class Game extends JFrame {
 				RowSpec.decode(Settings.ROWS*Settings.FIELDSIZE+"px"),}));
 		
 		this.addWindowListener(new WindowAdapter() {
-
 			@Override
 			public void windowClosing(WindowEvent e) {
 				// TODO Auto-generated method stub

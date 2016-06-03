@@ -29,45 +29,48 @@ public class Playground extends JPanel {
 	
 	public Playground(Game gameFrame) {
 		
-		// Referenz zum Spielfenster
-		this.gameFrame = gameFrame;
-		
-		// Eine Spielfigur anlegen
-		this.meeple = new Meeple(Settings.COLS/2, Settings.ROWS-1, gameFrame.figure.getImage(), this);
-
-		// KeyListener zum Bewegen
-		this.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode() >=37 && e.getKeyCode() <= 40) {
-					if(!inGame) {
-						new Thread(new Timer(gameFrame)).start();
-						inGame = true;
-					}
-					meeple.moveField(e.getKeyCode());
-					repaint();
-				}
-			}
-		});
-		
-		
-		// Add Thread
-		//new Thread(new AddObject(this)).start();
-		
-		// Move Thread
-		new Thread(new MoveObject(this)).start();
-		
-		for(ActiveRow row : this.gameFrame.level.getRows()) {
-			new Thread(row).start();
-		}
-		
-	}
+		System.out.println(gameFrame.level);
+//		
+//		// Referenz zum Spielfenster
+//		this.gameFrame = gameFrame;
+//		
+//		// Eine Spielfigur anlegen
+//		this.meeple = new Meeple(Settings.COLS/2, Settings.ROWS-1, gameFrame.figure.getImage(), this);
+//
+//		// KeyListener zum Bewegen
+//		this.addKeyListener(new KeyAdapter() {
+//			@Override
+//			public void keyPressed(KeyEvent e) {
+//				if(e.getKeyCode() >=37 && e.getKeyCode() <= 40) {
+//					if(!inGame) {
+//						new Thread(new Timer(gameFrame)).start();
+//						inGame = true;
+//					}
+//					meeple.moveField(e.getKeyCode());
+//					repaint();
+//				}
+//			}
+//		});
+//		
+//		
+//		// Add Thread
+//		//new Thread(new AddObject(this)).start();
+//		
+//		// Move Thread
+//		new Thread(new MoveObject(this)).start();
+//		
+//		for(ActiveRow row : this.gameFrame.level.getRows()) {
+//			new Thread(row).start();
+//		}
+	}		
+	
 	
 	/*
 	 * Zeichnet das Panel
 	 * mit Prioritäten:
 	 * zuerst gezeichnetets liegt unten 
 	 */
+		/*
 	@Override
 	public void paintComponent(Graphics g) {
 		
@@ -103,6 +106,6 @@ public class Playground extends JPanel {
 		
 		lock.unlock();
 		
-	}
+	}*/
 
 }

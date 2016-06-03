@@ -42,23 +42,23 @@ public class Meeple {
 			fieldKoord.setRow(fieldKoord.getRow()+1);		
 		}
 		
-		if(fieldKoord.getCol() >= 0 && fieldKoord.getCol() < Settings.COLS) {      		// Überprüft ob neue Koordinate 
-			if(fieldKoord.getRow() >= 0 && fieldKoord.getRow() < Settings.ROWS) {		// im Spielfeld liegt
-				
-				boolean entranceable = true;
-				for(FieldObject object : playground.gameFrame.level.getObjectStructure()) {  	// Überprüft alle Objekte auf begebarkeit
-					if(object.getKoordinate().isSame(fieldKoord)) {
-						entranceable = object.isEntranceable();
-						break;
-					}
-				}
-				if(entranceable) {
-					this.x = fieldKoord.getCol() * Settings.FIELDSIZE;
-					this.y = fieldKoord.getRow() * Settings.FIELDSIZE;
-					moved = true;
-				}
-			}
-		}
+//		if(fieldKoord.getCol() >= 0 && fieldKoord.getCol() < Settings.COLS) {      		// Überprüft ob neue Koordinate 
+//			if(fieldKoord.getRow() >= 0 && fieldKoord.getRow() < Settings.ROWS) {		// im Spielfeld liegt
+//				
+//				boolean entranceable = true;
+//				for(FieldObject object : playground.gameFrame.level.getObjectStructure()) {  	// Überprüft alle Objekte auf begebarkeit
+//					if(object.getKoordinate().isSame(fieldKoord)) {
+//						entranceable = object.isEntranceable();
+//						break;
+//					}
+//				}
+//				if(entranceable) {
+//					this.x = fieldKoord.getCol() * Settings.FIELDSIZE;
+//					this.y = fieldKoord.getRow() * Settings.FIELDSIZE;
+//					moved = true;
+//				}
+//			}
+//		}
 		return moved;
 	}
 	
