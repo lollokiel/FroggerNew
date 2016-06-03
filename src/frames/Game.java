@@ -1,5 +1,8 @@
 package frames;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -12,21 +15,31 @@ import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 import objects.Figure;
+import settings.Settings;
 import utils.Level;
-import utils.Settings;
+import utils.Utils;
 
 public class Game extends JFrame {
 
 	public Level level;
 	public MainFrame mainframe;
 	private static final long serialVersionUID = 1L;
+	private int playedSeconds = 0;
+	public Playground playground;
+	public JLabel gametimer;
+	public Figure figure;
+	private Game gameFrame;
 
 	public Game(int levelNum, Figure figure, MainFrame frameFrogger) {
-		this.level = new Level("/level/backgroundStructure/"+levelNum+".txt", null);
+		
+		this.level = new Level("/level/backgroundStructure/"+levelNum+".txt", "/level/objectStructure/"+levelNum+".txt", this);
 		this.mainframe = frameFrogger;
+		this.figure = figure;
+		this.gameFrame = this;
+		
 		this.setResizable(false);
 		this.setTitle("Frogger");
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.setBounds(100, 100, Settings.COLS*Settings.FIELDSIZE, Settings.ROWS*Settings.FIELDSIZE + 75);
 		this.getContentPane().setLayout(new FormLayout(new ColumnSpec[] {
 				ColumnSpec.decode("default:grow"),},
@@ -35,6 +48,17 @@ public class Game extends JFrame {
 				FormSpecs.RELATED_GAP_ROWSPEC,
 				RowSpec.decode(Settings.ROWS*Settings.FIELDSIZE+"px"),}));
 		
+		this.addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				// TODO Auto-generated method stub
+				gameFrame.dispose();
+				gameFrame.playground.meeple.setAlive(false);
+				mainframe.setVisible(true);
+			}
+			
+		});
 		JPanel gameSettingsBar = new JPanel();
 		getContentPane().add(gameSettingsBar, "1, 1, fill, fill");
 		gameSettingsBar.setLayout(new FormLayout(new ColumnSpec[] {
@@ -59,7 +83,7 @@ public class Game extends JFrame {
 		JLabel lblZeit = new JLabel("Zeit:");
 		panelClock.add(lblZeit, "2, 1");
 		
-		JLabel gametimer = new JLabel("ZEIT_csd");
+		gametimer = new JLabel(Utils.getTime(0));
 		panelClock.add(gametimer, "4, 1, fill, default");
 		
 		JLabel lblBestzeit = new JLabel("Bestzeit:");
@@ -78,11 +102,24 @@ public class Game extends JFrame {
 
 		this.setFocusable(false);
 		
-		Playground playground = new Playground(this);
+		playground = new Playground(this);
 		getContentPane().add(playground, "1, 3, fill, fill");
 		playground.setFocusable(true);
 		playground.requestFocus();
 		
+	}
+	
+	public int getSeconds() {
+		return this.playedSeconds;
+	}
+	
+	public void raiseSeconds() {
+		this.playedSeconds++;
+		this.setTimer(this.playedSeconds);
+	}
+	
+	public void setTimer(int seconds) {
+		this.gametimer.setText(Utils.getTime(seconds));
 	}
 
 }

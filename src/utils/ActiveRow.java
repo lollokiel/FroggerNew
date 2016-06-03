@@ -1,10 +1,17 @@
 package utils;
 
-public class ActiveRow {
+import java.util.ArrayList;
 
+import frames.Playground;
+import objects.MoveableObject;
+
+public abstract class ActiveRow extends Thread {
+	
 	private int speed;
 	private int direction;
 	private int row;
+	protected Playground playground;
+	private ArrayList<MoveableObject> moveObjects = new ArrayList<MoveableObject>();
 	
 	public int getSpeed() {
 		return speed;
@@ -29,5 +36,17 @@ public class ActiveRow {
 	public void setRow(int row) {
 		this.row = row;
 	}	
+	
+	public void addMoveObject(MoveableObject object) {
+		this.moveObjects.add(object);
+	}
+	
+	public void removeMoveObject(MoveableObject object) {
+		this.moveObjects.remove(object);
+	}
+	
+	public ArrayList<MoveableObject> getMoveableObjects() {
+		return moveObjects;
+	}
 	
 }

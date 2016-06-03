@@ -23,8 +23,7 @@ import com.jgoodies.forms.layout.RowSpec;
 
 import objects.Figure;
 import objects.Player;
-import utils.HighscoreTableModel;
-import utils.Settings;
+import utils.*;
 
 
 
@@ -39,7 +38,8 @@ public class MainFrame extends JFrame{
 	private JComboBox<String> level;
 	private JComboBox<Figure> figure;
 	public Settings settings;
-
+	private MainFrame thisFrame;
+	private Game gameWindow;
 	/**
 	 * Launch the application.
 	 */
@@ -70,7 +70,7 @@ public class MainFrame extends JFrame{
 	private void initialize() {
 		settings = new Settings();
 		
-		MainFrame frameFrogger = this;
+		this.thisFrame = this;
 		this.setTitle("Frogger");
 		this.setBounds(100, 100, 270, 500);
 		this.setResizable(false);
@@ -205,6 +205,8 @@ public class MainFrame extends JFrame{
 		figure.addItem(new Figure("Schildkröte"));
 		figure.addItem(new Figure("Käfer"));
 
+
+		
 		JLabel lblFigur = new JLabel("Figur:");
 		pStartFigur.add(lblFigur, "1, 1, left, default");
 		pStartFigur.add(figure, "3, 1, default, fill");
@@ -215,10 +217,12 @@ public class MainFrame extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 					int levelSelected = Integer.parseInt((String) level.getSelectedItem());
 					Figure figurSelected = figure.getItemAt(figure.getSelectedIndex());
-					Game gameWindow = new Game(levelSelected, figurSelected, frameFrogger);
+					gameWindow = new Game(levelSelected, figurSelected, thisFrame);
 					gameWindow.setVisible(true);
+					thisFrame.dispose();					
 			}
 		});
 	}
+
 
 }
