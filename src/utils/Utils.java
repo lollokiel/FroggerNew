@@ -8,8 +8,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import com.sun.j3d.utils.applet.MainFrame;
-
 import settings.Settings;
 
 public class Utils {
