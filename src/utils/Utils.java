@@ -8,13 +8,17 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import com.sun.j3d.utils.applet.MainFrame;
+
+import settings.Settings;
+
 public class Utils {
 
 	/* 
 	 * Erstellt ein BufferedImage von einem übergebenden Pfad und gibt dieses zurück
 	 */
-	public static BufferedImage formTile(String path) throws IOException {
-		return ImageIO.read(Utils.class.getResource(path)).getSubimage(0, 0, Settings.FIELDSIZE, Settings.FIELDSIZE);
+	public static BufferedImage formTile(String path, int width, int height) throws IOException {
+		return ImageIO.read(Utils.class.getResource(path)).getSubimage(0, 0, width, height);
 	}
 	
 	/*
@@ -26,7 +30,8 @@ public class Utils {
 
 		FileReader file = null;
 		try {
-			file = new FileReader(Utils.class.getClass().getResource(path).getFile());
+			System.out.println(path);
+			file = new FileReader(Utils.class.getResource(path).getFile());
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		}
@@ -45,5 +50,19 @@ public class Utils {
 		}
 		return builder.toString();
 	}	
+	
+	/*
+	 * Gibt einen Timer aus Minuten und Sekunden abhängig einer übergegebenen Sekundenzahl zurück
+	 */
+	public static String getTime(int seconds) {
+		return (int)(seconds/60)+":"+addZero(seconds%60);
+	}
+	
+	public static String addZero(int i) {
+		if(i < 10) {
+			return "0"+i;
+		}
+		return i+"";
+	}
 	
 }
