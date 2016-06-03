@@ -201,7 +201,10 @@ public class MainFrame extends JFrame{
 		figure = new JComboBox<Figure>();
 		figure.addItem(new Figure("Frosch"));
 		figure.addItem(new Figure("Huhn"));
-		
+		figure.addItem(new Figure("Känguru"));
+		figure.addItem(new Figure("Schildkröte"));
+		figure.addItem(new Figure("Käfer"));
+
 		JLabel lblFigur = new JLabel("Figur:");
 		pStartFigur.add(lblFigur, "1, 1, left, default");
 		pStartFigur.add(figure, "3, 1, default, fill");
