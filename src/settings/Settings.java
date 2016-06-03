@@ -41,6 +41,10 @@ public class Settings {
 	 */
 	public BufferedImage FROG;
 	public BufferedImage CHICKEN;
+	public BufferedImage KANGAROO;
+	public BufferedImage BEETLE;
+	public BufferedImage TURTLE;
+
 	
 	public Settings() {	
 		
@@ -60,6 +64,9 @@ public class Settings {
 
 			FROG 		= Utils.formTile("/objects/frog.png", 35, 35);
 			CHICKEN		= Utils.formTile("/objects/chicken.png", 35, 35);
+			KANGAROO	= Utils.formTile("/objects/kangaroo.png", 35, 35);
+			BEETLE		= Utils.formTile("/objects/beetle.png", 35, 35);
+			TURTLE		= Utils.formTile("/objects/turtle.png", 35, 35);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

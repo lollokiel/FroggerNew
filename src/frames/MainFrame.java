@@ -200,11 +200,13 @@ public class MainFrame extends JFrame{
 		
 		
 		figure = new JComboBox<Figure>();
-		figure.addItem(new Figure("Frosch",settings.FROG));
-//		figure.addItem(new Figure("Huhn"));
-//		figure.addItem(new Figure("K�nguru"));
-//		figure.addItem(new Figure("Schildkr�te"));
-//		figure.addItem(new Figure("K�fer"));
+
+		figure.addItem(new Figure("Frosch", settings.FROG));
+		figure.addItem(new Figure("Huhn", settings.CHICKEN));
+		figure.addItem(new Figure("Känguru",  settings.KANGAROO));
+		figure.addItem(new Figure("Käfer", settings.BEETLE));
+		figure.addItem(new Figure("Schildkröte", settings.TURTLE));
+
 
 
 		
