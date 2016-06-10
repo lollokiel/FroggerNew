@@ -3,6 +3,13 @@ package frames;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -16,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.TitledBorder;
 
+import com.google.gson.Gson;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
@@ -41,6 +49,7 @@ public class MainFrame extends JFrame{
 	public Settings settings;
 	private MainFrame thisFrame;
 	private Game gameWindow;
+	private ArrayList<Player> player = new ArrayList<Player>();
 	/**
 	 * Launch the application.
 	 */
@@ -75,7 +84,27 @@ public class MainFrame extends JFrame{
 		this.setTitle("Frogger");
 		this.setBounds(100, 100, 270, 500);
 		this.setResizable(false);
+		this.addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				Gson gson = new Gson();
+				String s = gson.toJson(player);
+				System.out.println(s);
+				try {
+					FileWriter bw = new FileWriter("highscore.txt");
+					bw.write("test");
+					bw.close();
+					System.out.println("test");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+			
+		});
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 		this.getContentPane().setLayout(new FormLayout(new ColumnSpec[] {
 				FormSpecs.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("default:grow"),
@@ -100,6 +129,25 @@ public class MainFrame extends JFrame{
 				RowSpec.decode("default:grow"),}));
 		
 		JButton btnSave = new JButton("Speichern");
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Gson gson = new Gson();
+				String s = gson.toJson(player);
+				System.out.println(s);
+				try {
+					File f = new File("highscore.txt");
+					FileWriter bw = new FileWriter(f);
+					bw.write("test");
+					
+					BufferedReader re = new BufferedReader(new FileReader(f));
+					System.out.println(re.readLine());
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+			}
+		});
 		pServer.add(btnSave, "1, 1, default, fill");
 		
 		JButton btnLoad = new JButton("Laden");
@@ -127,7 +175,7 @@ public class MainFrame extends JFrame{
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		panelHighscore.add(scrollPane, "1, 1, fill, fill");
 		
-		ArrayList<Player> player = new ArrayList<Player>();
+		player = new ArrayList<Player>();
 		player.add(new Player("Lorenz", 2));
 		player.add(new Player("ETst", 21));
 		
@@ -206,9 +254,6 @@ public class MainFrame extends JFrame{
 		figure.addItem(new Figure("Känguru",  settings.KANGAROO));
 		figure.addItem(new Figure("Käfer", settings.BEETLE));
 		figure.addItem(new Figure("Schildkröte", settings.TURTLE));
-
-
-
 		
 		JLabel lblFigur = new JLabel("Figur:");
 		pStartFigur.add(lblFigur, "1, 1, left, default");
@@ -218,14 +263,19 @@ public class MainFrame extends JFrame{
 		pStart.add(btnStart, "1, 7, default, fill");
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-					int levelSelected = Integer.parseInt((String) level.getSelectedItem());
-					Figure figurSelected = figure.getItemAt(figure.getSelectedIndex());
-					gameWindow = new Game(levelSelected, figurSelected, thisFrame);
-					gameWindow.setVisible(true);
-					thisFrame.dispose();					
+				int levelSelected = Integer.parseInt((String) level.getSelectedItem());
+				Figure figureSelected = figure.getItemAt(figure.getSelectedIndex());
+				thisFrame.start(levelSelected, figureSelected);				
 			}
 		});
 	}
+	
+	public void start(int level, Figure figure) {
+		gameWindow = new Game(level, figure, thisFrame);
+		gameWindow.setVisible(true);
+		this.dispose();
+	}
+
 
 
 }

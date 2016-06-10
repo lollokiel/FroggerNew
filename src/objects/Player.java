@@ -1,9 +1,9 @@
 package objects;
 
-public class Player {
+public class Player implements Comparable<Player> {
 
 	private String sName;
-	private int iPoints;
+	public int iPoints;
 	
 	public Player(String sName, int iPoints) {
 		this.sName = sName;
@@ -16,6 +16,14 @@ public class Player {
 	
 	public int getiPoints() {
 		return iPoints;
+	}
+
+
+	@Override
+	public int compareTo(Player o) {
+
+		// TODO Auto-generated method stub
+		return (iPoints < o.iPoints ) ? -1 : (iPoints > o.iPoints )? 1 : 0;
 	}
 	
 }

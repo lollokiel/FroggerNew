@@ -16,7 +16,6 @@ import com.jgoodies.forms.layout.RowSpec;
 
 import objects.Figure;
 import settings.Settings;
-import utils.Level;
 import utils.Utils;
 
 public class Game extends JFrame {

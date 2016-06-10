@@ -28,7 +28,6 @@ public class Utils {
 
 		FileReader file = null;
 		try {
-			System.out.println(path);
 			file = new FileReader(Utils.class.getResource(path).getFile());
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();

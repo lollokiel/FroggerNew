@@ -21,9 +21,19 @@ public class Street extends ActiveRow {
 	@Override
 	public void run() {
 		while(this.playground.meeple.isAlive()) {
-			System.out.println("Add");
+			playground.lock.lock();
+				Car newCar = null;
+				if(this.getDirection() == 1) {
+					newCar = new Car(s.CARS_R.get((int)(Math.random()*s.CARS_R.size())),-70,this);
+				} else {
+					newCar = new Car(s.CARS_L.get((int)(Math.random()*s.CARS_L.size())),Settings.FIELDSIZE*Settings.COLS,this);
+				}
+				this.addMoveObject(newCar);
+			playground.lock.unlock();
 			try {
-				Thread.sleep(100);
+
+				int t = 2000 + (int)(Math.random()*1000);
+				Thread.sleep(t);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

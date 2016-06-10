@@ -24,42 +24,44 @@ public class Meeple {
 	}
 	
 	public boolean moveField(int direction) {
-		
-		FieldKoordinate fieldKoord = new FieldKoordinate(new Koordinate(this.x, this.y));
-		
-		boolean moved = false;
-		
-		if(direction == 37) { //Links
-			fieldKoord.setCol(fieldKoord.getCol()-1);
-		} else
-		if(direction== 38) { //Oben
-			fieldKoord.setRow(fieldKoord.getRow()-1);		
-		} else
-		if(direction== 39) { //Rechts
-			fieldKoord.setCol(fieldKoord.getCol()+1);		
-		}  else
-		if(direction== 40) { //Unten
-			fieldKoord.setRow(fieldKoord.getRow()+1);		
+		if(this.isAlive() && this.playground.countdown.seconds < 0) {
+			FieldKoordinate fieldKoord = new FieldKoordinate(new Koordinate(this.x, this.y));
+			
+			boolean moved = false;
+			
+			if(direction == 37) { //Links
+				fieldKoord.setCol(fieldKoord.getCol()-1);
+			} else
+			if(direction== 38) { //Oben
+				fieldKoord.setRow(fieldKoord.getRow()-1);		
+			} else
+			if(direction== 39) { //Rechts
+				fieldKoord.setCol(fieldKoord.getCol()+1);		
+			}  else
+			if(direction== 40) { //Unten
+				fieldKoord.setRow(fieldKoord.getRow()+1);		
+			}
+			
+			if(fieldKoord.getCol() >= 0 && fieldKoord.getCol() < Settings.COLS) {      		// Überprüft ob neue Koordinate 
+				if(fieldKoord.getRow() >= 0 && fieldKoord.getRow() < Settings.ROWS) {		// im Spielfeld liegt
+					
+					boolean entranceable = true;
+					for(FieldObject object : playground.getObjectStructure()) {  	// Überprüft alle Objekte auf begebarkeit
+						if(object.getKoordinate().isSame(fieldKoord)) {
+							entranceable = object.isEntranceable();
+							break;
+						}
+					}
+					if(entranceable) {
+						this.x = fieldKoord.getCol() * Settings.FIELDSIZE;
+						this.y = fieldKoord.getRow() * Settings.FIELDSIZE;
+						moved = true;
+					}
+				}
+			}
+			return moved;
 		}
-		
-//		if(fieldKoord.getCol() >= 0 && fieldKoord.getCol() < Settings.COLS) {      		// Überprüft ob neue Koordinate 
-//			if(fieldKoord.getRow() >= 0 && fieldKoord.getRow() < Settings.ROWS) {		// im Spielfeld liegt
-//				
-//				boolean entranceable = true;
-//				for(FieldObject object : playground.gameFrame.level.getObjectStructure()) {  	// Überprüft alle Objekte auf begebarkeit
-//					if(object.getKoordinate().isSame(fieldKoord)) {
-//						entranceable = object.isEntranceable();
-//						break;
-//					}
-//				}
-//				if(entranceable) {
-//					this.x = fieldKoord.getCol() * Settings.FIELDSIZE;
-//					this.y = fieldKoord.getRow() * Settings.FIELDSIZE;
-//					moved = true;
-//				}
-//			}
-//		}
-		return moved;
+		return false;
 	}
 	
 	public BufferedImage getImage() {

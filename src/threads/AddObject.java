@@ -21,7 +21,7 @@ public class AddObject implements Runnable {
 		while(playground.meeple.isAlive()) {
 
 			playground.lock.lock();
-			for(ActiveRow row : playground.gameFrame.level.getRows()) {
+			for(ActiveRow row : playground.getRows()) {
 				int difference = 1000000;
 				if(row.getDirection() == 1) {
 					for(MoveableObject obj : row.getMoveableObjects()) {

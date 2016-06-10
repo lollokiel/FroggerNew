@@ -2,6 +2,7 @@ package settings;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import utils.Utils;
 
@@ -12,7 +13,7 @@ public class Settings {
 	 */
 	public static int ROWS = 19;
 	public static int COLS = 17;
-	public static int FIELDSIZE = 32;
+	public static int FIELDSIZE = 35;
 	
 	/*
 	 * Movable Objects
@@ -20,7 +21,9 @@ public class Settings {
 	public BufferedImage CAR_L;
 	public BufferedImage CAR_R;
 	public BufferedImage TRUNK;
-	
+
+	public ArrayList<BufferedImage> CARS_L = new ArrayList<BufferedImage>();
+	public ArrayList<BufferedImage> CARS_R = new ArrayList<BufferedImage>();
 	
 	/*
 	 * Backgrounds
@@ -67,6 +70,17 @@ public class Settings {
 			KANGAROO	= Utils.formTile("/objects/kangaroo.png", 35, 35);
 			BEETLE		= Utils.formTile("/objects/beetle.png", 35, 35);
 			TURTLE		= Utils.formTile("/objects/turtle.png", 35, 35);
+
+			CARS_L.add(Utils.formTile("/objects/autoblau_li.png", 70, 35));
+			CARS_L.add(Utils.formTile("/objects/autogruen_li.png", 70, 35));
+			CARS_L.add(Utils.formTile("/objects/autorot_li.png", 70, 35));
+			CARS_L.add(Utils.formTile("/objects/motorbike_li.png", 70, 35));
+			
+			CARS_R.add(Utils.formTile("/objects/autoblau_re.png", 70, 35));
+			CARS_R.add(Utils.formTile("/objects/autogruen_re.png", 70, 35));
+			CARS_R.add(Utils.formTile("/objects/autorot_re.png", 70, 35));
+			CARS_R.add(Utils.formTile("/objects/motorbike_re.png", 70, 35));
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
