@@ -17,10 +17,16 @@ public class MoveObject implements Runnable {
 	
 	@Override
 	public void run() {
-		while(playground.meeple.isAlive()) {
+		while(playground.getMeeple().isAlive()) {
 			playground.lock.lock();
 				for(ActiveRow row : playground.getRows()) {
 					for(MoveableObject obj : row.getMoveableObjects()) {
+						if(obj.getMeeple() != null) {
+							obj.getMeeple().raiseX(row.getSpeed()*row.getDirection());
+							if(obj.getMeeple().getX() < 0 || obj.getMeeple().getX()+Settings.FIELDSIZE > Settings.COLS*Settings.FIELDSIZE) {
+								playground.die();
+							}
+						}
 						obj.raiseX(row.getSpeed()*row.getDirection());
 					}
 				}
@@ -31,9 +37,11 @@ public class MoveObject implements Runnable {
 			// Auf Kollision prüfen
 			playground.lock.lock();
 				for(ActiveRow row : playground.getRows()) {
-					if(row.getClass() == Street.class && row.getRow() == playground.meeple.getY()/Settings.FIELDSIZE) {
+					if(row.getClass() == Street.class && row.getRow() == playground.getMeeple().getY()/Settings.FIELDSIZE) {
 						for(MoveableObject obj : row.getMoveableObjects()) {
-							if(!(playground.meeple.getX() > obj.getX()+obj.getWidth() || playground.meeple.getX() + Settings.FIELDSIZE < obj.getX() )) {
+							if(!(playground.getMeeple().getX() > obj.getX()+obj.getWidth() || playground.getMeeple().getX() + Settings.FIELDSIZE < obj.getX() )) {
+
+								System.out.println("due");
 								playground.die();
 								break;
 							}

@@ -13,14 +13,24 @@ public class Street extends ActiveRow {
 		this.setDirection(direction);
 		this.setSpeed(speed);
 		this.setRow(row);
-		this.addMoveObject(new Car(s.CAR_R,120,this));
+		Car newCar1 = null;
+		Car newCar2 = null;
+		if(this.getDirection() == 1) {
+			newCar1 = new Car(s.CARS_R.get((int)(Math.random()*s.CARS_R.size())),Settings.FIELDSIZE*Settings.COLS/3,this);
+			newCar2 = new Car(s.CARS_R.get((int)(Math.random()*s.CARS_R.size())),(Settings.FIELDSIZE*Settings.COLS*2)/3,this);
+		} else {
+			newCar1 = new Car(s.CARS_L.get((int)(Math.random()*s.CARS_L.size())),Settings.FIELDSIZE*Settings.COLS/3,this);
+			newCar2 = new Car(s.CARS_L.get((int)(Math.random()*s.CARS_L.size())),(Settings.FIELDSIZE*Settings.COLS*2)/3,this);
+		}
+		this.addMoveObject(newCar1);
+		this.addMoveObject(newCar2);
 		this.start();
 		this.playground = playground;
 	}
 
 	@Override
 	public void run() {
-		while(this.playground.meeple.isAlive()) {
+		while(this.playground.getMeeple().isAlive()) {
 			playground.lock.lock();
 				Car newCar = null;
 				if(this.getDirection() == 1) {

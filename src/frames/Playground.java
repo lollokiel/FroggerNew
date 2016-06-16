@@ -37,18 +37,19 @@ import utils.Utils;
 public class Playground extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	public Game gameFrame;
-	public Meeple meeple;
-	public boolean inGame = false;
-	public final Lock lock = new ReentrantLock();
+	
+	private Game gameFrame;
+	private Meeple meeple;
+	private boolean inGame = false;
 	private int level;
 	private Settings settings;
-	public Countdown countdown;
+	private Countdown countdown;
+	public boolean started = true;
+	public final Lock lock = new ReentrantLock();
 	
 	/*
 	 * Struktur
 	 */
-		
 	private ArrayList<BufferedImage> 	rows 		= new ArrayList<BufferedImage>();
 	private ArrayList<Tree>		 		trees		= new ArrayList<Tree>();
 	private ArrayList<Pit>		 		pits		= new ArrayList<Pit>();
@@ -56,42 +57,135 @@ public class Playground extends JPanel {
 	private ArrayList<Street> 			streets 	= new ArrayList<Street>();
 	private ArrayList<River> 			rivers 		= new ArrayList<River>();
 		
-	
 	private JLabel countdownLabel = new JLabel();
 	
 	public Playground(Game gameFrame) {
-		
-		// Countdown
-		
-	
+			
 		// Referenz zum Spielfenster
 		this.gameFrame = gameFrame;
-		this.level = this.gameFrame.level;
-		this.settings = this.gameFrame.mainframe.settings;
+		this.level = this.gameFrame.getLevel();
+		this.settings = this.gameFrame.getMainFrame().getSettings();
 		
 		// Countdown
-		this.countdown = new Countdown(this);
+		this.countdown = new Countdown();
 		new Thread(this.countdown).start();
 
 		// Eine Spielfigur anlegen
-		this.meeple = new Meeple(Settings.COLS/2, Settings.ROWS-1, gameFrame.figure.getImage(), this);
+		this.meeple = new Meeple(Settings.COLS/2, Settings.ROWS-1, gameFrame.getFigure().getImage(), this);
 		
 		// Spielfeld aufbauen
 		this.readBackgroundStructure();
 		this.readObjectStructure();
 		
-
 		// KeyListener zum Bewegen
 		this.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode() >=37 && e.getKeyCode() <= 40) {
-					if(!inGame) {
-						new Thread(new Timer(gameFrame)).start();
-						inGame = true;
+				// Abfrage, ob gedrückte Taste eine Pfeiltaste ist
+				// 37 - Links; 38 - Oben; 39 - Rechts; 40 - Links
+				if(e.getKeyCode() >=37 && e.getKeyCode() <= 40) { 
+					
+					// Wenn Startcountdown abgelaufen ist
+					if(countdown.seconds<=0) {
+						if(!inGame) {
+							// Starte Stoppuhr
+							new Thread(new Timer(gameFrame)).start();
+							inGame = true;
+						}
+										
+						lock.lock();
+						
+						// Definiere neue Reihe
+						int newRow = meeple.getRow();
+						if(e.getKeyCode() == 38 && meeple.getRow() > 0) {
+							newRow--;
+						} else
+						if(e.getKeyCode() == 40 && meeple.getRow() < Settings.ROWS-1) {
+								newRow++;
+						}
+						
+						River riverTo = null;
+						for(River river : getRiver()) {
+							if(river.getRow() == newRow) {
+								riverTo = river;
+								break;
+							}
+						}
+						
+						if(riverTo != null) {  // Spielfigur geht auf Fluss
+							
+							if(e.getKeyCode() == 37 || e.getKeyCode() == 39) {
+															
+								int newX = meeple.getX();
+								if(e.getKeyCode() == 37) {
+									newX -= Settings.FIELDSIZE;
+								} else {
+									newX += Settings.FIELDSIZE;
+								}
+								
+								if(newX - meeple.getMoveableObject().getX() < 0 || (newX + Settings.FIELDSIZE) - (meeple.getMoveableObject().getX()+meeple.getMoveableObject().getWidth()) > 0) {
+									die();
+								}
+								meeple.moveTo(newX, meeple.getY());
+							} else {
+
+								if(meeple.getMoveableObject() != null) {
+									meeple.getMoveableObject().setMeeple(null);
+									meeple.setMoveableObject(null);
+								}
+								
+								for(MoveableObject obj : riverTo.getMoveableObjects()) {
+									if(obj.getX() < meeple.getMiddleX() && obj.getX() + obj.getWidth() > meeple.getMiddleX()) {
+										meeple.setMoveableObject(obj);
+										break;
+									}
+								}
+								
+								int newX = 0;
+								if(meeple.getMoveableObject() == null) {
+									newX = meeple.getX();
+									die();
+								} else {
+									newX = meeple.getMoveableObject().getX()+(Settings.FIELDSIZE)*
+											((int)((meeple.getMiddleX()-meeple.getMoveableObject().getX()) / Settings.FIELDSIZE));																
+								}
+								meeple.moveTo(newX, newRow*Settings.FIELDSIZE);	
+								
+							}
+						} else {	// Spielfigur geht auf anderem Feld
+							
+							meeple.moveField(e.getKeyCode());
+							
+							if(meeple.getMoveableObject() != null) {
+								meeple.getMoveableObject().setMeeple(null);
+								meeple.setMoveableObject(null);
+							}
+						}
+						
+						//Check ob auf Wasserrose
+						
+						
+						//Check ob auf Loch oder Wasserrose
+						for(FieldObject obj : getObjectStructure()) {
+							if(obj.getFieldKoordinate().isSame(meeple.getFieldkoordinate())) {
+								if(obj.getClass() == Pit.class) {
+									die();
+								} else if(obj.getClass() == Waterlily.class) {
+									Waterlily waterlily = (Waterlily)obj;
+									new Thread(waterlily).start();
+								}
+							} 
+						}
+						
+						
+						if(meeple.getY() == 0) {
+							win();
+						}
+						
+						lock.unlock();
+						repaint();
+						
 					}
-					meeple.moveField(e.getKeyCode());
-					repaint();
 				}
 			}
 		});
@@ -110,7 +204,6 @@ public class Playground extends JPanel {
 
 	@Override
 	public void paintComponent(Graphics g) {
-		
 		lock.lock();
 		Graphics2D g2 = (Graphics2D)g;
 		
@@ -123,30 +216,36 @@ public class Playground extends JPanel {
 			rowNum++;
 		}
 		
-		
 		// Zeichne alle Objekte ( Baum, Wasserrsose, ... )
 		for(FieldObject object : this.getObjectStructure()) {
-			g2.drawImage(object.getBackground(), object.getCol()*Settings.FIELDSIZE, object.getRow()*Settings.FIELDSIZE, Settings.FIELDSIZE, Settings.FIELDSIZE, null);
+			if(object.getClass() == Pit.class) {
+				if(meeple.getFieldkoordinate().isSame(object.getFieldKoordinate())) {
+					g2.drawImage(object.getBackground(), object.getCol()*Settings.FIELDSIZE, object.getRow()*Settings.FIELDSIZE, Settings.FIELDSIZE, Settings.FIELDSIZE, null);
+				}
+			} else
+				g2.drawImage(object.getBackground(), object.getCol()*Settings.FIELDSIZE, object.getRow()*Settings.FIELDSIZE, Settings.FIELDSIZE, Settings.FIELDSIZE, null);
 		}
 		
 		
-		// Zeichne Spielfigur
-		g2.drawImage(meeple.getImage(), meeple.getX(), meeple.getY(), Settings.FIELDSIZE, Settings.FIELDSIZE, null);
-		
-		
-		// Zeichne Fahrende Objekte
-		for(ActiveRow row : this.getRows()) {
-			for(MoveableObject obj : row.getMoveableObjects()) {
-				g2.drawImage(obj.getBackground(), obj.getX(), row.getRow()*Settings.FIELDSIZE, obj.getWidth(), obj.getHeight(), null);
-			}
+		// Fahrende Objekt bzw. Spielfigur abhängig vom Lebensstatus
+		if(meeple.isAlive()) {
+			g2 = paintRiver(g2);
+			g2 = paintMeeple(g2);
+			g2 = paintStreet(g2);
+		} else {
+			g2 = paintMeeple(g2);
+			g2 = paintRiver(g2);
+			g2 = paintStreet(g2);
 		}
 		
+		// Zeichne transparenten schwarzen Hintergrund, wenn Spielfigur gestorben ist
 		if(!this.meeple.isAlive()) {
 			g2.setColor(new Color(0,0,0,127));
 			g2.fillRect(0,0,Settings.FIELDSIZE*Settings.COLS, Settings.FIELDSIZE*Settings.ROWS);
 		}
 		
-		if(countdown.seconds > -100) {
+		// Countdown zu beginn des Spiels: 3,2,1, Los
+		if(countdown.seconds >= 0) {
 			countdownLabel.setVerticalAlignment(SwingConstants.CENTER);
 			countdownLabel.setHorizontalAlignment(SwingConstants.CENTER);
 			countdownLabel.setForeground(Color.white);
@@ -154,112 +253,48 @@ public class Playground extends JPanel {
 			if(countdown.seconds > 0) {
 				countdownLabel.setFont(new Font("Calibri",0, countdown.seconds%100));
 				countdownLabel.setText((int)countdown.seconds/100+1+"");
-			}
-			if(countdown.seconds <= 0 && countdown.seconds > -100) {
-				countdownLabel.setFont(new Font("Calibri",0, 50));
-				countdownLabel.setText("Los!");
+			} else {
+				this.remove(countdownLabel);
 			}
 			this.add(this.countdownLabel);
-		} else {
-			if(countdown.seconds == -100) this.remove(countdownLabel);
+			
 		}
-		
-/*		
-		if(countdown.seconds > 0) {
-			g2.setColor(new Color(0,0,0,127));
-			g2.fillRect(0,0,Settings.FIELDSIZE*Settings.COLS, Settings.FIELDSIZE*Settings.ROWS);
-			g2.setFont(new Font("Calibri",0, countdown.seconds%100));
-			g2.setColor(Color.WHITE);
-			g2.drawString((int)countdown.seconds/100+1+"", 300-(countdown.seconds%100)/10, 300-(countdown.seconds%100)/10);
-			System.out.println(countdown.seconds +" : "+ countdown.seconds %100);
-		}
-		if(countdown.seconds <= 0 && countdown.seconds > -100) {
-			g2.setFont(new Font("Calibri",0,50));
-			g2.drawString("Los!", 10, 100);
-		}*/
 		
 		lock.unlock();
 		
 	}
 	
-	private void readBackgroundStructure() {
-		String[] backgroundStructureLines = Utils.readFile("/level/backgroundStructure/"+this.level+".txt").split("\n");
-		int i = 0;
-		for(String rowString : backgroundStructureLines) {
-			String[] rowSettings = rowString.split("\\s");
-			switch(rowSettings[0]) {
-				case "2": this.addRiver(rowSettings, i); break;
-				case "3": this.addStreet(rowSettings, i); break;
-				default: rows.add(settings.GRASS); break;
+	/*
+	 * Spielfigur gewinnt
+	 */
+	public void win() {
+		this.meeple.setAlive(false);
+		
+		JLabel gameOver = new JLabel("Game Over!");
+		gameOver.setHorizontalAlignment(SwingConstants.CENTER);
+		Font f = new Font("Arial", Font.ITALIC , 80);
+		gameOver.setFont(f);
+		gameOver.setForeground(Color.WHITE);
+		gameOver.setBounds(0, 300, Settings.FIELDSIZE*Settings.COLS, 100);
+		this.add(gameOver);
+		
+		
+		int btnWidth = 200;
+		JButton btnRestart = new JButton("Neu Starten");
+		btnRestart.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				gameFrame.getMainFrame().disposeGameFrame(false);
+				gameFrame.getMainFrame().start(gameFrame.getLevel(), gameFrame.getFigure());
 			}
-			i++;
-		}
+		});
+		btnRestart.setBounds((Settings.FIELDSIZE * Settings.COLS -btnWidth) / 2, 450, btnWidth, 50);
+		this.add(btnRestart);
 	}
 	
-	private void readObjectStructure() {
-		String[] objectStructureLines = Utils.readFile("/level/objectStructure/"+this.level+".txt").split("\n");
-		
-		for(int row = 0; row < objectStructureLines.length; row++) {
-			String[] rowStructure = objectStructureLines[row].split(",");
-			for(int col = 0; col < rowStructure.length; col++) {
-				int objectType = Integer.parseInt(rowStructure[col]);
-				if(objectType == 1) {
-					trees.add(new Tree(new FieldKoordinate(col, row), settings.TREE));
-				} else
-				if(objectType == 2) {
-					pits.add(new Pit(new FieldKoordinate(col, row), settings.PIT));
-				} else
-				if(objectType == 3) {
-					waterlilies.add(new Waterlily(new FieldKoordinate(col, row), settings.WATERLILY));
-				}
-			}
-		}
-	}
-	
-	private void addRiver(String[] rowSettings, int row) {
-		if(rowSettings.length == 4) {
-			rows.add(this.settings.WATER); 
-			
-			int speed = Integer.parseInt(rowSettings[1]);
-			int direction = Integer.parseInt(rowSettings[2]);
-					
-			rivers.add(new River(direction, speed, row));
-		}
-	}
-	
-	private void addStreet(String[] rowSettings, int row) {
-		if(rowSettings.length == 4) {
-			rows.add(this.settings.STREET); 
-			
-			int speed = Integer.parseInt(rowSettings[1]);
-			int direction = Integer.parseInt(rowSettings[2]);
-					
-			Street streetNew = new Street(direction, speed, row, this);
-			streets.add(streetNew);
-		}
-	}
-	
-	public ArrayList<BufferedImage> getBackgroundStructure() {
-		return rows;
-	}
-	
-	public ArrayList<FieldObject> getObjectStructure() {
-		ArrayList<FieldObject> returnObjects = new ArrayList<FieldObject>();
-		
-		returnObjects.addAll(trees);
-		returnObjects.addAll(waterlilies);
-		returnObjects.addAll(pits);
-		
-		return returnObjects;
-	}
-	
-	public ArrayList<ActiveRow> getRows() {
-		ArrayList<ActiveRow> rows = new ArrayList<ActiveRow>();
-		rows.addAll(streets);
-		rows.addAll(rivers);
-		return rows;
-	}
-	
+	/*
+	 * Spielfigur stibt
+	 */
 	public void die() {
 		this.meeple.setAlive(false);
 		
@@ -271,16 +306,192 @@ public class Playground extends JPanel {
 		gameOver.setBounds(0, 300, Settings.FIELDSIZE*Settings.COLS, 100);
 		this.add(gameOver);
 		
+		
 		int btnWidth = 200;
 		JButton btnRestart = new JButton("Neu Starten");
 		btnRestart.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				gameFrame.mainframe.start(gameFrame.level, gameFrame.figure);
+				gameFrame.getMainFrame().disposeGameFrame(false);
+				gameFrame.getMainFrame().start(gameFrame.getLevel(), gameFrame.getFigure());
 			}
 		});
 		btnRestart.setBounds((Settings.FIELDSIZE * Settings.COLS -btnWidth) / 2, 450, btnWidth, 50);
 		this.add(btnRestart);
+	}
+	
+	/*
+	 * Struktur Methoden (Hintergrund, Objekte, Reihen,...)
+	 */
+	
+		/*
+		 * Erstellt aus einer Datei ein Array mit der Hintergrundstruktur
+		 */
+		private void readBackgroundStructure() {
+			String[] backgroundStructureLines = Utils.readFile("/level/backgroundStructure/"+this.level+".txt").split("\n");
+			int i = 0;
+			for(String rowString : backgroundStructureLines) {
+				String[] rowSettings = rowString.split("\\s");
+				switch(rowSettings[0]) {
+					case "2": this.addRiver(rowSettings, i); break;
+					case "3": this.addStreet(rowSettings, i); break;
+					default: rows.add(settings.GRASS); break;
+				}
+				i++;
+			}
+		}
+		
+		/*
+		 * Funktion Gibt die Hintergrundstruktur zurück
+		 */
+		public ArrayList<BufferedImage> getBackgroundStructure() {
+			return rows;
+		}
+		
+		/*
+		 * Erstellt aus einer Datei ein Array mit der Objektstruktur
+		 */
+		private void readObjectStructure() {
+			String[] objectStructureLines = Utils.readFile("/level/objectStructure/"+this.level+".txt").split("\n");
+			
+			for(int row = 0; row < objectStructureLines.length; row++) {
+				String[] rowStructure = objectStructureLines[row].split(",");
+				for(int col = 0; col < rowStructure.length; col++) {
+					int objectType = Integer.parseInt(rowStructure[col]);
+					if(objectType == 1) {
+						trees.add(new Tree(new FieldKoordinate(col, row), settings.TREE));
+					} else
+					if(objectType == 2) {
+						pits.add(new Pit(new FieldKoordinate(col, row), settings.PIT));
+					} else
+					if(objectType == 3) {
+						waterlilies.add(new Waterlily(new FieldKoordinate(col, row), settings.WATERLILY, this));
+					}
+				}
+			}
+		}
+		
+		/*
+		 * Funktion gibt alle objekte in einer ArrayList zurück
+		 */
+		public ArrayList<FieldObject> getObjectStructure() {
+			ArrayList<FieldObject> returnObjects = new ArrayList<FieldObject>();
+			
+			returnObjects.addAll(trees);
+			returnObjects.addAll(waterlilies);
+			returnObjects.addAll(pits);
+			
+			return returnObjects;
+		}
+		
+		/*
+		 * Funktion löscht Wasserrose aus Liste
+		 */
+		public boolean removeWaterlily(Waterlily waterlily) {
+			return waterlilies.remove(waterlily);
+		}
+		
+		/*
+		 * Füge der Struktur einen Fluss hinzu
+		 */
+		private void addRiver(String[] rowSettings, int row) {
+			if(rowSettings.length == 4) {
+				rows.add(this.settings.WATER); 
+				
+				int speed = Integer.parseInt(rowSettings[1]);
+				int direction = Integer.parseInt(rowSettings[2]);
+						
+				rivers.add(new River(direction, speed, row, this));
+			}
+		}
+		
+		/*
+		 * Gib alle Flüsse zurück
+		 */
+		public ArrayList<River> getRiver() {
+			return rivers;
+		}
+		
+		/*
+		 * Füge der Struktur eine Straße hinzu
+		 */
+		private void addStreet(String[] rowSettings, int row) {
+			if(rowSettings.length == 4) {
+				rows.add(this.settings.STREET); 
+				
+				int speed = Integer.parseInt(rowSettings[1]);
+				int direction = Integer.parseInt(rowSettings[2]);
+						
+				streets.add(new Street(direction, speed, row, this));
+			}
+		}
+		
+		/*
+		 * Gib alle Straßen zurück
+		 */
+		public ArrayList<Street> getStreets() {
+			return streets;
+		}
+		
+		/*
+		 * Gib alle aktiven Reihen zurück ( Straßen & Flüsse)
+		 */
+		public ArrayList<ActiveRow> getRows() {
+			ArrayList<ActiveRow> rows = new ArrayList<ActiveRow>();
+			rows.addAll(streets);
+			rows.addAll(rivers);
+			return rows;
+		}
+	
+	/*
+	 * Methoden zum Zeichnen von Elementen 
+	 */
+	
+		/*
+		 * Zeichne alle Holzstämme auf Flüssen
+		 */
+		private Graphics2D paintRiver(Graphics2D g2) {
+			for(River row : this.getRiver()) {
+				for(MoveableObject obj : row.getMoveableObjects()) {
+					g2.drawImage(obj.getBackground(), obj.getX(), row.getRow()*Settings.FIELDSIZE, obj.getWidth(), obj.getHeight(), null);
+				}
+			}
+			return g2;
+		}
+		
+		/*
+		 * Zeichne alle Autos/Motorräder auf Straßen
+		 */
+		private Graphics2D paintStreet(Graphics2D g2) {
+			for(Street row : this.getStreets()) {
+				for(MoveableObject obj : row.getMoveableObjects()) {
+					g2.drawImage(obj.getBackground(), obj.getX(), row.getRow()*Settings.FIELDSIZE, obj.getWidth(), obj.getHeight(), null);
+				}
+			}
+			return g2;
+		}
+		
+		/*
+		 * Zeichne Spielfigur
+		 */
+		private Graphics2D paintMeeple(Graphics2D g2) {
+			g2.drawImage(meeple.getImage(), meeple.getX(), meeple.getY(), Settings.FIELDSIZE, Settings.FIELDSIZE, null);
+			return g2;
+		}
+	
+	/*
+	 * Getter
+	 */
+	public Countdown getCountdown() {
+		return countdown;
+	}
+	
+	public Game getGameFrame() {
+		return gameFrame;
+	}
+	
+	public Meeple getMeeple() {
+		return meeple;
 	}
 
 }

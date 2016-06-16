@@ -12,13 +12,13 @@ public class Timer extends Thread {
 	
 	@Override
 	public void run() {
-		while(gameFrame.playground.meeple.isAlive()) {
+		while(gameFrame.getPlayground().getMeeple().isAlive()) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			if(gameFrame.playground.meeple.isAlive())
+			if(gameFrame.getPlayground().getMeeple().isAlive())
 				gameFrame.raiseSeconds();
 		}
 	}

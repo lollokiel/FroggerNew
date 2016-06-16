@@ -17,18 +17,19 @@ import com.jgoodies.forms.layout.RowSpec;
 import objects.Figure;
 import settings.Settings;
 import utils.Utils;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Game extends JFrame {
 
-	public int level;
-	public MainFrame mainframe;
+	private static final long serialVersionUID = 1L;
+	
+	private int level;
+	private MainFrame mainframe;
 	private Game gameFrame;
-	public Playground playground;
-	
-	public Figure figure;
-	
-	public JLabel gametimer;
-
+	private Playground playground;
+	private Figure figure;
+	private JLabel gametimer;
 	private int playedSeconds = 0;
 	
 	public Game(int levelNum, Figure figure, MainFrame frameFrogger) {
@@ -54,7 +55,7 @@ public class Game extends JFrame {
 			public void windowClosing(WindowEvent e) {
 				// TODO Auto-generated method stub
 				gameFrame.dispose();
-				gameFrame.playground.meeple.setAlive(false);
+				gameFrame.playground.getMeeple().setAlive(false);
 				mainframe.setVisible(true);
 			}
 			
@@ -89,7 +90,12 @@ public class Game extends JFrame {
 		JLabel lblBestzeit = new JLabel("Bestzeit:");
 		panelClock.add(lblBestzeit, "2, 3");
 		
-		JLabel besttime = new JLabel("BESTZEIT");
+		
+		int best = mainframe.readBest(levelNum);
+		
+		JLabel besttime = new JLabel();
+		if(best > 0) besttime.setText(Utils.getTime(best));
+		else besttime.setText("-:--");
 		panelClock.add(besttime, "4, 3, fill, default");
 		
 		JLabel lblLevel = new JLabel("Level 1");
@@ -97,6 +103,11 @@ public class Game extends JFrame {
 		gameSettingsBar.add(lblLevel, "2, 1, fill, default");
 		
 		JButton btnGiveup = new JButton("Aufgeben");
+		btnGiveup.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				playground.repaint();
+			}
+		});
 		btnGiveup.setFocusable(false);
 		gameSettingsBar.add(btnGiveup, "3, 1, default, fill");
 
@@ -109,10 +120,6 @@ public class Game extends JFrame {
 		
 	}
 	
-	public int getSeconds() {
-		return this.playedSeconds;
-	}
-	
 	public void raiseSeconds() {
 		this.playedSeconds++;
 		this.setTimer(this.playedSeconds);
@@ -120,6 +127,30 @@ public class Game extends JFrame {
 	
 	public void setTimer(int seconds) {
 		this.gametimer.setText(Utils.getTime(seconds));
+	}
+	
+	/*
+	 * Getter Methodes
+	 */
+	
+	public int getSeconds() {
+		return this.playedSeconds;
+	}
+	
+	public Playground getPlayground() {
+		return playground;
+	}
+	
+	public MainFrame getMainFrame() {
+		return mainframe;
+	}
+	
+	public int getLevel() {
+		return level;
+	}
+	
+	public Figure getFigure() {
+		return figure;
 	}
 
 }

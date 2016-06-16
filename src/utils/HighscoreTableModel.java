@@ -21,10 +21,13 @@ public class HighscoreTableModel extends AbstractTableModel {
 	 * Das Spielerobjekt beinhaltet Namen und Punktestand
 	 */
 	public HighscoreTableModel(Iterable<Player> players) {
-		Iterator<Player> itPlayer = players.iterator();
-		while(itPlayer.hasNext()) {
-			Player player = itPlayer.next();
-			games.add(player);
+		
+		if(players != null) {
+			Iterator<Player> itPlayer = players.iterator();
+			while(itPlayer.hasNext()) {
+				Player player = itPlayer.next();
+				games.add(player);
+			}
 		}
 	}
 	

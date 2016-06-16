@@ -2,6 +2,7 @@ package objects;
 
 import java.awt.image.BufferedImage;
 
+import game.Meeple;
 import utils.ActiveRow;
 
 public class MoveableObject {
@@ -9,6 +10,7 @@ public class MoveableObject {
 	protected int x;
 	protected BufferedImage background;
 	protected ActiveRow row;
+	private Meeple meeple = null;
 	
 	public int getX() {
 		return x;
@@ -36,5 +38,13 @@ public class MoveableObject {
 	
 	public ActiveRow getRow() {
 		return this.row;
+	}
+
+	public void setMeeple(Meeple meeple) {
+		this.meeple = meeple;
+	}
+	
+	public Meeple getMeeple() {
+		return meeple;
 	}
 }

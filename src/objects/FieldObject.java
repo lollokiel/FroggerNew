@@ -15,7 +15,7 @@ public abstract class FieldObject {
 		return this.backgorund;
 	}
 	
-	public FieldKoordinate getKoordinate() {
+	public FieldKoordinate getFieldKoordinate() {
 		return this.koordinate;
 	}
 	

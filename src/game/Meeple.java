@@ -4,6 +4,8 @@ import java.awt.image.BufferedImage;
 
 import frames.Playground;
 import objects.FieldObject;
+import objects.MoveableObject;
+import objects.Trunk;
 import settings.Settings;
 import utils.FieldKoordinate;
 import utils.Koordinate;
@@ -15,6 +17,7 @@ public class Meeple {
 	private BufferedImage image;
 	private boolean alive = true;
 	private Playground playground;
+	private MoveableObject moveableObject = null;
 	
 	public Meeple (int col, int row, BufferedImage image, Playground playground) {
 		this.x = Settings.FIELDSIZE * col;
@@ -24,8 +27,18 @@ public class Meeple {
 	}
 	
 	public boolean moveField(int direction) {
-		if(this.isAlive() && this.playground.countdown.seconds < 0) {
-			FieldKoordinate fieldKoord = new FieldKoordinate(new Koordinate(this.x, this.y));
+		if(this.isAlive() && this.playground.getCountdown().seconds < 0) {
+			
+			int aktX = 0;
+			if(this.getMoveableObject() != null) {
+				this.getMoveableObject().setMeeple(null);
+				this.setMoveableObject(null);
+				aktX = this.getMiddleX();
+			} else { 
+				aktX = this.getX();
+			}
+			
+			FieldKoordinate fieldKoord = new FieldKoordinate(new Koordinate(aktX, this.y));
 			
 			boolean moved = false;
 			
@@ -47,7 +60,7 @@ public class Meeple {
 					
 					boolean entranceable = true;
 					for(FieldObject object : playground.getObjectStructure()) {  	// Überprüft alle Objekte auf begebarkeit
-						if(object.getKoordinate().isSame(fieldKoord)) {
+						if(object.getFieldKoordinate().isSame(fieldKoord)) {
 							entranceable = object.isEntranceable();
 							break;
 						}
@@ -82,5 +95,36 @@ public class Meeple {
 	
 	public void setAlive(boolean alive) {
 		this.alive = alive;
+	}
+	
+	public int getMiddleX() {
+		return this.x + 17;
+	}
+	
+	public void setMoveableObject(MoveableObject object) {
+		this.moveableObject = object;
+		if(this.moveableObject != null)
+			this.moveableObject.setMeeple(this);
+	}
+	
+	public MoveableObject getMoveableObject() {
+		return this.moveableObject;
+	}
+	
+	public void raiseX(int dif) {
+		this.x += dif;
+	}
+	
+	public int getRow() {
+		return this.getY() / Settings.FIELDSIZE;
+	}
+	
+	public void moveTo(int x, int y) {
+		this.x = x;
+		this.y = y;		
+	}
+	
+	public FieldKoordinate getFieldkoordinate() {
+		return new FieldKoordinate(this.getX()/Settings.FIELDSIZE, this.getRow());
 	}
 }
