@@ -47,6 +47,10 @@ public class Settings {
 	public BufferedImage KANGAROO;
 	public BufferedImage BEETLE;
 	public BufferedImage TURTLE;
+	/*
+	 * Screens
+	 */
+	public BufferedImage GAMEOVER;
 
 	
 	public Settings() {	
@@ -80,6 +84,8 @@ public class Settings {
 			CARS_R.add(Utils.formTile("/objects/autogruen_re.png", 70, 35));
 			CARS_R.add(Utils.formTile("/objects/autorot_re.png", 70, 35));
 			CARS_R.add(Utils.formTile("/objects/motorbike_re.png", 70, 35));
+			
+			GAMEOVER     = Utils.formTile("/screens/gameover.png", 250, 240);
 			
 		} catch (IOException e) {
 			e.printStackTrace();

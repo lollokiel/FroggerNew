@@ -163,20 +163,8 @@ public class Playground extends JPanel {
 		} else {
 			if(countdown.seconds == -100) this.remove(countdownLabel);
 		}
-		
-/*		
-		if(countdown.seconds > 0) {
-			g2.setColor(new Color(0,0,0,127));
-			g2.fillRect(0,0,Settings.FIELDSIZE*Settings.COLS, Settings.FIELDSIZE*Settings.ROWS);
-			g2.setFont(new Font("Calibri",0, countdown.seconds%100));
-			g2.setColor(Color.WHITE);
-			g2.drawString((int)countdown.seconds/100+1+"", 300-(countdown.seconds%100)/10, 300-(countdown.seconds%100)/10);
-			System.out.println(countdown.seconds +" : "+ countdown.seconds %100);
-		}
-		if(countdown.seconds <= 0 && countdown.seconds > -100) {
-			g2.setFont(new Font("Calibri",0,50));
-			g2.drawString("Los!", 10, 100);
-		}*/
+		if(!meeple.isAlive())
+			g2.drawImage(settings.GAMEOVER, 175, 200, 250, 240,null);
 		
 		lock.unlock();
 		
@@ -263,13 +251,16 @@ public class Playground extends JPanel {
 	public void die() {
 		this.meeple.setAlive(false);
 		
-		JLabel gameOver = new JLabel("Game Over!");
-		gameOver.setHorizontalAlignment(SwingConstants.CENTER);
-		Font f = new Font("Arial", Font.ITALIC , 80);
-		gameOver.setFont(f);
-		gameOver.setForeground(Color.WHITE);
-		gameOver.setBounds(0, 300, Settings.FIELDSIZE*Settings.COLS, 100);
-		this.add(gameOver);
+//		JLabel gameOver = new JLabel("Game Over!");
+//		gameOver.setHorizontalAlignment(SwingConstants.CENTER);
+//		Font f = new Font("Arial", Font.ITALIC , 80);
+//		gameOver.setFont(f);
+//		gameOver.setForeground(Color.WHITE);
+//		gameOver.setBounds(0, 300, Settings.FIELDSIZE*Settings.COLS, 100);
+//		this.add(gameOver);
+
+
+		
 		
 		int btnWidth = 200;
 		JButton btnRestart = new JButton("Neu Starten");
