@@ -259,6 +259,9 @@ public class Playground extends JPanel {
 			this.add(this.countdownLabel);
 			
 		}
+
+		if(!meeple.isAlive())
+			g2.drawImage(settings.GAMEOVER, 175, 200, 250, 240,null);
 		
 		lock.unlock();
 		
@@ -298,13 +301,16 @@ public class Playground extends JPanel {
 	public void die() {
 		this.meeple.setAlive(false);
 		
-		JLabel gameOver = new JLabel("Game Over!");
-		gameOver.setHorizontalAlignment(SwingConstants.CENTER);
-		Font f = new Font("Arial", Font.ITALIC , 80);
-		gameOver.setFont(f);
-		gameOver.setForeground(Color.WHITE);
-		gameOver.setBounds(0, 300, Settings.FIELDSIZE*Settings.COLS, 100);
-		this.add(gameOver);
+//		JLabel gameOver = new JLabel("Game Over!");
+//		gameOver.setHorizontalAlignment(SwingConstants.CENTER);
+//		Font f = new Font("Arial", Font.ITALIC , 80);
+//		gameOver.setFont(f);
+//		gameOver.setForeground(Color.WHITE);
+//		gameOver.setBounds(0, 300, Settings.FIELDSIZE*Settings.COLS, 100);
+//		this.add(gameOver);
+
+
+		
 		
 		
 		int btnWidth = 200;
