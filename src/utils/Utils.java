@@ -2,13 +2,12 @@ package utils;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-
-import settings.Settings;
 
 public class Utils {
 
@@ -61,5 +60,18 @@ public class Utils {
 		}
 		return i+"";
 	}
+	
+	/*
+	 * Check Level OK
+	 */
+	public static boolean checkLevel(int level) {
+		if( new File("res/level/backgroundStructure/"+level+".txt").exists() ) {
+			if( new File("res/level/objectStructure/"+level+".txt").exists() ) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	
 }

@@ -1,9 +1,8 @@
-package objects;
+package activeObjects;
 
 import java.awt.image.BufferedImage;
 
-import game.Meeple;
-import utils.ActiveRow;
+import activeRows.ActiveRow;
 
 public class Trunk extends MoveableObject {
 

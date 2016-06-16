@@ -1,8 +1,8 @@
-package objects;
+package activeRows;
 
+import activeObjects.Trunk;
 import frames.Playground;
-import settings.Settings;
-import utils.ActiveRow;
+import utils.Settings;
 
 public class River extends ActiveRow {
 

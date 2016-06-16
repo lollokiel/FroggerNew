@@ -1,4 +1,4 @@
-package objects;
+package activeObjects;
 
 import java.awt.image.BufferedImage;
 

@@ -1,10 +1,8 @@
-package objects;
-import java.awt.Component;
+package utils;
 import java.awt.image.BufferedImage;
 
-public class Figure extends Component {
-	
-	private static final long serialVersionUID = 1L;
+public class Figure {
+
 	private String sName;
 	private BufferedImage image;
 	

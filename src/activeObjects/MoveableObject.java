@@ -1,11 +1,11 @@
-package objects;
+package activeObjects;
 
 import java.awt.image.BufferedImage;
 
+import activeRows.ActiveRow;
 import game.Meeple;
-import utils.ActiveRow;
 
-public class MoveableObject {
+public abstract class MoveableObject {
 	
 	protected int x;
 	protected BufferedImage background;

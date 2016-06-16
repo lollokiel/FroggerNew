@@ -1,9 +1,9 @@
-package objects;
+package activeRows;
 
 
+import activeObjects.Car;
 import frames.Playground;
-import settings.Settings;
-import utils.ActiveRow;
+import utils.Settings;
 
 public class Street extends ActiveRow {
 

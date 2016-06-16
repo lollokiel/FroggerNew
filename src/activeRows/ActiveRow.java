@@ -1,9 +1,9 @@
-package utils;
+package activeRows;
 
 import java.util.ArrayList;
 
+import activeObjects.MoveableObject;
 import frames.Playground;
-import objects.MoveableObject;
 
 public abstract class ActiveRow extends Thread {
 	

@@ -2,13 +2,12 @@ package game;
 
 import java.awt.image.BufferedImage;
 
+import activeObjects.FieldObject;
+import activeObjects.MoveableObject;
 import frames.Playground;
-import objects.FieldObject;
-import objects.MoveableObject;
-import objects.Trunk;
-import settings.Settings;
 import utils.FieldKoordinate;
 import utils.Koordinate;
+import utils.Settings;
 
 public class Meeple {
 
@@ -125,6 +124,6 @@ public class Meeple {
 	}
 	
 	public FieldKoordinate getFieldkoordinate() {
-		return new FieldKoordinate(this.getX()/Settings.FIELDSIZE, this.getRow());
+		return new FieldKoordinate(this.getX() / Settings.FIELDSIZE, this.getRow());
 	}
 }

@@ -1,4 +1,4 @@
-package objects;
+package utils;
 
 public class Player implements Comparable<Player> {
 

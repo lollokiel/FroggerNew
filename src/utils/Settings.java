@@ -1,10 +1,8 @@
-package settings;
+package utils;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import utils.Utils;
 
 public class Settings {
 
@@ -14,6 +12,8 @@ public class Settings {
 	public static int ROWS = 19;
 	public static int COLS = 17;
 	public static int FIELDSIZE = 35;
+	public static int PLAYGROUND_WIDTH = FIELDSIZE * COLS;
+	public static int PLAYGROUND_HEIGHT = FIELDSIZE * ROWS;
 	
 	/*
 	 * Movable Objects
@@ -47,6 +47,7 @@ public class Settings {
 	public BufferedImage KANGAROO;
 	public BufferedImage BEETLE;
 	public BufferedImage TURTLE;
+	public ArrayList<Figure> MEEPLES = new ArrayList<Figure>();
 	/*
 	 * Screens
 	 */
@@ -69,11 +70,11 @@ public class Settings {
 			WATERLILY 	= Utils.formTile("/objects/waterlily.png", 35, 35);
 			PIT 		= Utils.formTile("/objects/pit.png", 35, 35);
 
-			FROG 		= Utils.formTile("/objects/frog.png", 35, 35);
-			CHICKEN		= Utils.formTile("/objects/chicken.png", 35, 35);
-			KANGAROO	= Utils.formTile("/objects/kangaroo.png", 35, 35);
-			BEETLE		= Utils.formTile("/objects/beetle.png", 35, 35);
-			TURTLE		= Utils.formTile("/objects/turtle.png", 35, 35);
+			FROG 		= Utils.formTile("/objects/frog.png", 35, 35);		MEEPLES.add(new Figure("Frosch", FROG));
+			CHICKEN		= Utils.formTile("/objects/chicken.png", 35, 35);	MEEPLES.add(new Figure("Huhn", CHICKEN));
+			KANGAROO	= Utils.formTile("/objects/kangaroo.png", 35, 35);	MEEPLES.add(new Figure("Kängeru", KANGAROO));
+			BEETLE		= Utils.formTile("/objects/beetle.png", 35, 35);	MEEPLES.add(new Figure("Käfer", BEETLE));
+			TURTLE		= Utils.formTile("/objects/turtle.png", 35, 35);	MEEPLES.add(new Figure("Schildkröte", TURTLE));
 
 			CARS_L.add(Utils.formTile("/objects/autoblau_li.png", 70, 35));
 			CARS_L.add(Utils.formTile("/objects/autogruen_li.png", 70, 35));

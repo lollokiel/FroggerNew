@@ -1,8 +1,8 @@
-package objects;
+package activeObjects;
 
 import java.awt.image.BufferedImage;
 
-import utils.ActiveRow;
+import activeRows.ActiveRow;
 
 public class Car extends MoveableObject {
 

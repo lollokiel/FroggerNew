@@ -14,8 +14,8 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
-import objects.Figure;
-import settings.Settings;
+import utils.Figure;
+import utils.Settings;
 import utils.Utils;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -57,6 +57,7 @@ public class Game extends JFrame {
 				gameFrame.dispose();
 				gameFrame.playground.getMeeple().setAlive(false);
 				mainframe.setVisible(true);
+				mainframe.reloadHighscore();
 			}
 			
 		});

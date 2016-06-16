@@ -2,11 +2,11 @@ package threads;
 
 import java.awt.image.BufferedImage;
 
+import activeObjects.Car;
+import activeObjects.MoveableObject;
+import activeRows.ActiveRow;
 import frames.Playground;
-import objects.Car;
-import objects.MoveableObject;
-import settings.Settings;
-import utils.ActiveRow;
+import utils.Settings;
 
 public class AddObject implements Runnable {
 

@@ -1,7 +1,5 @@
 package utils;
 
-import settings.Settings;
-
 public class FieldKoordinate {
 
 	private int row;

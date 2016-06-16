@@ -1,16 +1,15 @@
 package utils;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 
 import javax.swing.table.AbstractTableModel;
-
-import objects.Player;
 
 public class HighscoreTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = 1L;
 	ArrayList<Player> games = new ArrayList<Player>();
-	String[] colNames = {"Name", "Punkte"};
+	String[] colNames = {"Name", "Zeit"};
 	
 	public HighscoreTableModel() {
 		
@@ -29,6 +28,8 @@ public class HighscoreTableModel extends AbstractTableModel {
 				games.add(player);
 			}
 		}
+		
+		games.sort(Comparator.reverseOrder());
 	}
 	
 	public void addPlayer(Player pPlayer) {
@@ -53,7 +54,7 @@ public class HighscoreTableModel extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int iRowIndex, int iColumnIndex) {
 		Player p = games.get(iRowIndex);
-		return(iColumnIndex == 0) ? p.getsName() : p.getiPoints();
+		return(iColumnIndex == 0) ? p.getsName() : (int)(p.getiPoints()/60)+":"+Utils.addZero((int)(p.getiPoints()%60));
 	}
 
 }
