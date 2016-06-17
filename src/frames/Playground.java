@@ -287,15 +287,7 @@ public class Playground extends JPanel {
 	public void win() {
 		this.win = true;
 		this.meeple.setAlive(false);
-		
-//		JLabel wonLabel = new JLabel("Geschafft!");
-//		wonLabel.setHorizontalAlignment(SwingConstants.CENTER);
-//		Font f = new Font("Arial", Font.ITALIC , 80);
-//		wonLabel.setFont(f);
-//		wonLabel.setForeground(Color.WHITE);
-//		wonLabel.setBounds(0, 300, Settings.FIELDSIZE*Settings.COLS, 100);
-//		this.add(wonLabel);
-//		
+				
 		JLabel wonNameLabel = new JLabel("Dein Name:");
 		wonNameLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		Font f2 = new Font("Arial", Font.ITALIC , 20);
