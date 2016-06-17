@@ -315,20 +315,21 @@ public class Playground extends JPanel {
 			}
 		});
 		btnNextLevel.setBounds((Settings.FIELDSIZE * Settings.COLS -btnWidth) / 2, 600, btnWidth, 50);
-		//this.add(btnNextLevel);
+		this.add(btnNextLevel);
 		
 		JButton btnRestart = new JButton("Nochmal spielen");
-//		btnRestart.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				
-//				if(wonNameField.getText().length() > 0)
-//				
-//				gameFrame.setVisible(false);
-//				gameFrame.getMainFrame().start(gameFrame.getLevel(), gameFrame.getFigure(), gameFrame.getBounds().x, gameFrame.getBounds().y);
-//			}
-//		});
-		btnRestart.setVisible(true);
+		btnRestart.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if(wonNameField.getText().length() > 0)
+					gameFrame.getMainFrame().addPlayerToHighscore(gameFrame.getLevel(), wonNameField.getText(), gameFrame.getSeconds() );
+
+				gameFrame.setVisible(false);
+				gameFrame.getMainFrame().start(gameFrame.getLevel(), gameFrame.getFigure(), gameFrame.getBounds().x, gameFrame.getBounds().y);
+			}
+		});
+		btnRestart.setBounds(0, 0, 200, 20);
 		this.add(btnRestart);
 		
 		JButton btnSave = new JButton("Speichern");
