@@ -52,6 +52,7 @@ public class Settings {
 	 * Screens
 	 */
 	public BufferedImage GAMEOVER;
+	public BufferedImage LEVELCOMPLETE;
 
 	
 	public Settings() {	
@@ -86,7 +87,8 @@ public class Settings {
 			CARS_R.add(Utils.formTile("/objects/autorot_re.png", 70, 35));
 			CARS_R.add(Utils.formTile("/objects/motorbike_re.png", 70, 35));
 			
-			GAMEOVER     = Utils.formTile("/screens/gameover.png", 250, 240);
+			GAMEOVER      = Utils.formTile("/screens/gameover.png", 250, 240);
+			LEVELCOMPLETE = Utils.formTile("/screens/levelcomplete.png", 500, 500);
 			
 		} catch (IOException e) {
 			e.printStackTrace();

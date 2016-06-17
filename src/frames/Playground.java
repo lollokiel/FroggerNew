@@ -157,7 +157,12 @@ public class Playground extends JPanel {
 	
 			// Game Over Bild
 			if(!meeple.isAlive() && !win)
-				g2.drawImage(settings.GAMEOVER, 175, 200, 250, 240,null);
+				g2.drawImage(settings.GAMEOVER, 175, 200, 250, 240, null);
+			
+			// Level complete Bild
+			if(win){
+				g2.drawImage(settings.LEVELCOMPLETE, (settings.PLAYGROUND_WIDTH-350)/2, 100, 350, 350, null);
+			}
 		
 		lock.unlock();
 		
@@ -283,27 +288,28 @@ public class Playground extends JPanel {
 		this.win = true;
 		this.meeple.setAlive(false);
 		
-		JLabel wonLabel = new JLabel("Geschafft!");
-		wonLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		Font f = new Font("Arial", Font.ITALIC , 80);
-		wonLabel.setFont(f);
-		wonLabel.setForeground(Color.WHITE);
-		wonLabel.setBounds(0, 300, Settings.FIELDSIZE*Settings.COLS, 100);
-		this.add(wonLabel);
-		
+//		JLabel wonLabel = new JLabel("Geschafft!");
+//		wonLabel.setHorizontalAlignment(SwingConstants.CENTER);
+//		Font f = new Font("Arial", Font.ITALIC , 80);
+//		wonLabel.setFont(f);
+//		wonLabel.setForeground(Color.WHITE);
+//		wonLabel.setBounds(0, 300, Settings.FIELDSIZE*Settings.COLS, 100);
+//		this.add(wonLabel);
+//		
 		JLabel wonNameLabel = new JLabel("Dein Name:");
 		wonNameLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		Font f2 = new Font("Arial", Font.ITALIC , 20);
 		wonNameLabel.setFont(f2);
 		wonNameLabel.setForeground(Color.WHITE);
-		wonNameLabel.setBounds(100, 400, Settings.FIELDSIZE*Settings.COLS, 100);
+		wonNameLabel.setBounds(160, 505, Settings.FIELDSIZE*Settings.COLS, 100);
 		this.add(wonNameLabel);
 		
+		int btnWidth = 200;
 		JTextField wonNameField = new JTextField();
-		wonNameField.setBounds(200, 400, 200, 50);
+		wonNameField.setBounds((int)((Settings.FIELDSIZE * Settings.COLS -btnWidth) * (3/4.0)), 530, 200, 50);
 		this.add(wonNameField);
 		
-		int btnWidth = 200;
+	
 		JButton btnRestart = new JButton("Nächstes Level");
 		btnRestart.addActionListener(new ActionListener() {
 			@Override
@@ -316,7 +322,7 @@ public class Playground extends JPanel {
 				gameFrame.getMainFrame().start(gameFrame.getLevel()+1, gameFrame.getFigure(), gameFrame.getBounds().x, gameFrame.getBounds().y);
 			}
 		});
-		btnRestart.setBounds((Settings.FIELDSIZE * Settings.COLS -btnWidth) / 2, 450, btnWidth, 50);
+		btnRestart.setBounds((Settings.FIELDSIZE * Settings.COLS -btnWidth) / 2, 600, btnWidth, 50);
 		this.add(btnRestart);
 	}
 	
