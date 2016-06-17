@@ -2,51 +2,64 @@ package activeRows;
 
 import java.util.ArrayList;
 
-import activeObjects.MoveableObject;
+import activeObjects.MovableObject;
 import frames.Playground;
+import utils.Settings;
 
 public abstract class ActiveRow extends Thread {
+	
+
+	protected Settings settings;
+	protected Playground playground;
 	
 	private int speed;
 	private int direction;
 	private int row;
-	protected Playground playground;
-	private ArrayList<MoveableObject> moveObjects = new ArrayList<MoveableObject>();
+	private ArrayList<MovableObject> movableObjects = new ArrayList<MovableObject>();
 	
+	/*
+	 * Getter
+	 */
 	public int getSpeed() {
-		return speed;
-	}
-	
-	public void setSpeed(int speed) {
-		this.speed = speed;
+		return this.speed;
 	}
 	
 	public int getDirection() {
-		return direction;
+		return this.direction;
+	}
+	
+	public int getRow() {
+		return this.row;
+	}
+	
+	/*
+	 * Setter
+	 */	
+	public void setSpeed(int speed) {
+		this.speed = speed;
 	}
 	
 	public void setDirection(int direction) {
 		this.direction = direction;
 	}
 	
-	public int getRow() {
-		return row;
-	}
-	
 	public void setRow(int row) {
 		this.row = row;
 	}	
 	
-	public void addMoveObject(MoveableObject object) {
-		this.moveObjects.add(object);
+	/*
+	 * Other
+	 */
+	public void addMovableObject(MovableObject object) {
+		this.movableObjects.add(object);
 	}
 	
-	public void removeMoveObject(MoveableObject object) {
-		this.moveObjects.remove(object);
+	public void removeMovableObject(MovableObject object) {
+		this.movableObjects.remove(object);
 	}
 	
-	public ArrayList<MoveableObject> getMoveableObjects() {
-		return moveObjects;
+	public ArrayList<MovableObject> getMoveableObjects() {
+		return movableObjects;
 	}
 	
 }

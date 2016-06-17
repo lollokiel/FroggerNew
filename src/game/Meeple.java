@@ -3,7 +3,7 @@ package game;
 import java.awt.image.BufferedImage;
 
 import activeObjects.FieldObject;
-import activeObjects.MoveableObject;
+import activeObjects.MovableObject;
 import frames.Playground;
 import utils.FieldKoordinate;
 import utils.Koordinate;
@@ -16,7 +16,7 @@ public class Meeple {
 	private BufferedImage image;
 	private boolean alive = true;
 	private Playground playground;
-	private MoveableObject moveableObject = null;
+	private MovableObject moveableObject = null;
 	
 	public Meeple (int col, int row, BufferedImage image, Playground playground) {
 		this.x = Settings.FIELDSIZE * col;
@@ -30,7 +30,7 @@ public class Meeple {
 			
 			int aktX = 0;
 			if(this.getMoveableObject() != null) {
-				this.getMoveableObject().setMeeple(null);
+				this.getMoveableObject().setMeepleOn(null);
 				this.setMoveableObject(null);
 				aktX = this.getMiddleX();
 			} else { 
@@ -100,13 +100,13 @@ public class Meeple {
 		return this.x + 17;
 	}
 	
-	public void setMoveableObject(MoveableObject object) {
+	public void setMoveableObject(MovableObject object) {
 		this.moveableObject = object;
 		if(this.moveableObject != null)
-			this.moveableObject.setMeeple(this);
+			this.moveableObject.setMeepleOn(this);
 	}
 	
-	public MoveableObject getMoveableObject() {
+	public MovableObject getMoveableObject() {
 		return this.moveableObject;
 	}
 	

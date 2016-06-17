@@ -2,28 +2,25 @@ package utils;
 
 public class Player implements Comparable<Player> {
 
-	private String sName;
-	public int iPoints;
+	private String name;
+	public int time;
 	
-	public Player(String sName, int iPoints) {
-		this.sName = sName;
-		this.iPoints = iPoints;
+	public Player(String name, int time) {
+		this.name = name;
+		this.time = time;
 	}
 	
-	public String getsName() {
-		return sName;
+	public String getName() {
+		return name;
 	}
 	
-	public int getiPoints() {
-		return iPoints;
+	public int getTime() {
+		return time;
 	}
-
 
 	@Override
 	public int compareTo(Player o) {
-
-		// TODO Auto-generated method stub
-		return (iPoints < o.iPoints ) ? -1 : (iPoints > o.iPoints )? 1 : 0;
+		return (time < o.time ) ? -1 : (time > o.time )? 1 : 0;
 	}
 	
 }

@@ -10,7 +10,9 @@ public class Koordinate {
 		this.y = y;
 	}
 	
-	
+	/*
+	 * Getter
+	 */
 	public int getX() {
 		return this.x;
 	}

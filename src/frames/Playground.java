@@ -20,7 +20,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import activeObjects.FieldObject;
-import activeObjects.MoveableObject;
+import activeObjects.MovableObject;
 import activeObjects.Pit;
 import activeObjects.Tree;
 import activeObjects.Waterlily;
@@ -32,25 +32,24 @@ import threads.MoveObject;
 import utils.Countdown;
 import utils.FieldKoordinate;
 import utils.Settings;
-import utils.Timer;
 import utils.Utils;
 
 public class Playground extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
-	private Game gameFrame;
-	private Meeple meeple;
-	private boolean meepleMoved = false;
-	private int level;
-	private Settings settings;
-	private Countdown countdown;
-	public final Lock lock = new ReentrantLock();
-	private boolean win = false;
-	
 	/*
-	 * Struktur
+	 * Deklaration
 	 */
+	private Game 		gameFrame;
+	private Meeple 		meeple;
+	private Settings 	settings;
+	private Countdown 	countdown;
+	private final Lock 	lock = new ReentrantLock();
+	private int 		level;
+	private boolean 	meepleMoved = false;
+	private boolean 	win = false;
+	
 	private ArrayList<BufferedImage> 	rows 		= new ArrayList<BufferedImage>();
 	private ArrayList<Tree>		 		trees		= new ArrayList<Tree>();
 	private ArrayList<Pit>		 		pits		= new ArrayList<Pit>();
@@ -176,7 +175,7 @@ public class Playground extends JPanel {
 			if(countdown.seconds<=0) {
 				if(!meepleMoved) {
 					// Starte Stoppuhr
-					new Thread(new Timer(gameFrame)).start();
+					new Thread(gameFrame.getTimer()).start();
 					meepleMoved = true;
 				}
 								
@@ -218,11 +217,11 @@ public class Playground extends JPanel {
 					} else {
 
 						if(meeple.getMoveableObject() != null) {
-							meeple.getMoveableObject().setMeeple(null);
+							meeple.getMoveableObject().setMeepleOn(null);
 							meeple.setMoveableObject(null);
 						}
 						
-						for(MoveableObject obj : riverTo.getMoveableObjects()) {
+						for(MovableObject obj : riverTo.getMoveableObjects()) {
 							if(obj.getX() < meeple.getMiddleX() && obj.getX() + obj.getWidth() > meeple.getMiddleX()) {
 								meeple.setMoveableObject(obj);
 								break;
@@ -245,7 +244,7 @@ public class Playground extends JPanel {
 					meeple.moveField(e.getKeyCode());
 					
 					if(meeple.getMoveableObject() != null) {
-						meeple.getMoveableObject().setMeeple(null);
+						meeple.getMoveableObject().setMeepleOn(null);
 						meeple.setMoveableObject(null);
 					}
 				}
@@ -311,10 +310,10 @@ public class Playground extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				
 				if(wonNameField.getText().length() > 0)
-					gameFrame.getMainFrame().addPlayerToHighscore(gameFrame.getLevel(),wonNameField.getText(), gameFrame.getSeconds() );
+					gameFrame.getMainFrame().addPlayerToHighscore(gameFrame.getLevel(), wonNameField.getText(), gameFrame.getSeconds() );
 				
-				gameFrame.getMainFrame().setVisible(false);
-				gameFrame.getMainFrame().start(gameFrame.getLevel()+1, gameFrame.getFigure());
+				gameFrame.setVisible(false);
+				gameFrame.getMainFrame().start(gameFrame.getLevel()+1, gameFrame.getFigure(), gameFrame.getBounds().x, gameFrame.getBounds().y);
 			}
 		});
 		btnRestart.setBounds((Settings.FIELDSIZE * Settings.COLS -btnWidth) / 2, 450, btnWidth, 50);
@@ -332,8 +331,8 @@ public class Playground extends JPanel {
 		btnRestart.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				gameFrame.getMainFrame().setVisible(false);
-				gameFrame.getMainFrame().start(gameFrame.getLevel(), gameFrame.getFigure());
+				gameFrame.setVisible(false);
+				gameFrame.getMainFrame().start(gameFrame.getLevel(), gameFrame.getFigure(), gameFrame.getBounds().x, gameFrame.getBounds().y);
 			}
 		});
 		btnRestart.setBounds((Settings.FIELDSIZE * Settings.COLS -btnWidth) / 2, 450, btnWidth, 50);
@@ -472,7 +471,7 @@ public class Playground extends JPanel {
 		 */
 		private Graphics2D paintRiver(Graphics2D g2) {
 			for(River row : this.getRiver()) {
-				for(MoveableObject obj : row.getMoveableObjects()) {
+				for(MovableObject obj : row.getMoveableObjects()) {
 					g2.drawImage(obj.getBackground(), obj.getX(), row.getRow()*Settings.FIELDSIZE, obj.getWidth(), obj.getHeight(), null);
 				}
 			}
@@ -484,7 +483,7 @@ public class Playground extends JPanel {
 		 */
 		private Graphics2D paintStreet(Graphics2D g2) {
 			for(Street row : this.getStreets()) {
-				for(MoveableObject obj : row.getMoveableObjects()) {
+				for(MovableObject obj : row.getMoveableObjects()) {
 					g2.drawImage(obj.getBackground(), obj.getX(), row.getRow()*Settings.FIELDSIZE, obj.getWidth(), obj.getHeight(), null);
 				}
 			}
@@ -512,6 +511,10 @@ public class Playground extends JPanel {
 	
 	public Meeple getMeeple() {
 		return meeple;
+	}
+	
+	public Lock getLock() {
+		return lock;
 	}
 
 }

@@ -1,45 +1,48 @@
 package activeRows;
 
 
-import activeObjects.Car;
+import activeObjects.MovableObject;
 import frames.Playground;
 import utils.Settings;
 
 public class Street extends ActiveRow {
-
-	private Settings s = new Settings();
 	
 	public Street(int direction, int speed, int row, Playground playground) {
 		this.setDirection(direction);
 		this.setSpeed(speed);
 		this.setRow(row);
-		Car newCar1 = null;
-		Car newCar2 = null;
-		if(this.getDirection() == 1) {
-			newCar1 = new Car(s.CARS_R.get((int)(Math.random()*s.CARS_R.size())),Settings.FIELDSIZE*Settings.COLS/3,this);
-			newCar2 = new Car(s.CARS_R.get((int)(Math.random()*s.CARS_R.size())),(Settings.FIELDSIZE*Settings.COLS*2)/3,this);
-		} else {
-			newCar1 = new Car(s.CARS_L.get((int)(Math.random()*s.CARS_L.size())),Settings.FIELDSIZE*Settings.COLS/3,this);
-			newCar2 = new Car(s.CARS_L.get((int)(Math.random()*s.CARS_L.size())),(Settings.FIELDSIZE*Settings.COLS*2)/3,this);
-		}
-		this.addMoveObject(newCar1);
-		this.addMoveObject(newCar2);
-		this.start();
 		this.playground = playground;
+		this.settings = playground.getGameFrame().getMainFrame().getSettings();
+		
+		MovableObject newCar1 = null;
+		MovableObject newCar2 = null;
+		if(this.getDirection() == 1) {
+			newCar1 = new MovableObject(this.settings.CARS_R.get((int)(Math.random()*this.settings.CARS_R.size())),Settings.FIELDSIZE*Settings.COLS/3,this);
+			newCar2 = new MovableObject(this.settings.CARS_R.get((int)(Math.random()*this.settings.CARS_R.size())),(Settings.FIELDSIZE*Settings.COLS*2)/3,this);
+		} else {
+			newCar1 = new MovableObject(this.settings.CARS_L.get((int)(Math.random()*this.settings.CARS_L.size())),Settings.FIELDSIZE*Settings.COLS/3,this);
+			newCar2 = new MovableObject(this.settings.CARS_L.get((int)(Math.random()*this.settings.CARS_L.size())),(Settings.FIELDSIZE*Settings.COLS*2)/3,this);
+		}
+		this.addMovableObject(newCar1);
+		this.addMovableObject(newCar2);
+		this.start();
 	}
 
 	@Override
 	public void run() {
 		while(this.playground.getMeeple().isAlive()) {
-			playground.lock.lock();
-				Car newCar = null;
+			this.playground.getLock().lock();
+			
+				MovableObject newCar = null;
 				if(this.getDirection() == 1) {
-					newCar = new Car(s.CARS_R.get((int)(Math.random()*s.CARS_R.size())),-70,this);
+					newCar = new MovableObject(this.settings.CARS_R.get((int)(Math.random()*this.settings.CARS_R.size())),-70,this);
 				} else {
-					newCar = new Car(s.CARS_L.get((int)(Math.random()*s.CARS_L.size())),Settings.FIELDSIZE*Settings.COLS,this);
+					newCar = new MovableObject(this.settings.CARS_L.get((int)(Math.random()*this.settings.CARS_L.size())),Settings.PLAYGROUND_WIDTH,this);
 				}
-				this.addMoveObject(newCar);
-			playground.lock.unlock();
+				this.addMovableObject(newCar);
+				
+			this.playground.getLock().unlock();
+			
 			try {
 
 				int t = 2000 + (int)(Math.random()*1000);

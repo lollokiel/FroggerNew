@@ -2,43 +2,44 @@ package threads;
 
 import java.awt.image.BufferedImage;
 
-import activeObjects.Car;
-import activeObjects.MoveableObject;
+import activeObjects.MovableObject;
 import activeRows.ActiveRow;
 import frames.Playground;
 import utils.Settings;
 
 public class AddObject implements Runnable {
 
+	private Settings settings;
 	private Playground playground;
 	
 	public AddObject(Playground p) {
 		this.playground = p;
+		this.settings = p.getGameFrame().getMainFrame().getSettings();
 	}
 	
 	@Override
 	public void run() {
-		while(playground.getMeeple().isAlive()) {
+		while(this.playground.getMeeple().isAlive()) {
 
-			playground.lock.lock();
-			for(ActiveRow row : playground.getRows()) {
+			this.playground.getLock().lock();
+			for(ActiveRow row : this.playground.getRows()) {
 				int difference = 1000000;
 				if(row.getDirection() == 1) {
-					for(MoveableObject obj : row.getMoveableObjects()) {
+					for(MovableObject obj : row.getMoveableObjects()) {
 						if(obj.getX() < difference) difference = obj.getX();
 					}
-					BufferedImage newImage = playground.getGameFrame().getMainFrame().getSettings().CAR_R;
-					if(difference > 60) row.addMoveObject(new Car(newImage,0-newImage.getWidth(), row));
+					BufferedImage newImage = this.settings.CAR_R;
+					if(difference > 60) row.addMovableObject(new MovableObject(newImage,0-newImage.getWidth(), row));
 				} else {
-					for(MoveableObject obj : row.getMoveableObjects()) {
-						int diffTmp = Settings.FIELDSIZE*Settings.COLS - obj.getX()+obj.getWidth();
+					for(MovableObject obj : row.getMoveableObjects()) {
+						int diffTmp = Settings.PLAYGROUND_WIDTH - obj.getX() + obj.getWidth();
 						if(difference < diffTmp) difference =  diffTmp;
 					}
-					BufferedImage newImage = playground.getGameFrame().getMainFrame().getSettings().CAR_L;
-					if(difference > 60) row.addMoveObject(new Car(newImage,0-newImage.getWidth(), row));
+					BufferedImage newImage = this.settings.CAR_L;
+					if(difference > 60) row.addMovableObject(new MovableObject(newImage,0-newImage.getWidth(), row));
 				}
 			}
-			playground.lock.unlock();
+			this.playground.getLock().unlock();
 			
 			try {
 				Thread.sleep(100);

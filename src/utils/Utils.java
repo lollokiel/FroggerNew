@@ -3,7 +3,6 @@ package utils;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -23,28 +22,27 @@ public class Utils {
 	 */
 	public static String readFile(String path) {
 		
-		StringBuilder builder = new StringBuilder();
-
-		FileReader file = null;
 		try {
-			file = new FileReader(Utils.class.getResource(path).getFile());
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		}
+			StringBuilder builder = new StringBuilder();
+
+			File file =  new File("res"+path);
 		
-		if(file != null) {
-			try {
-				BufferedReader br = new BufferedReader(file);
+			if(file.exists()) {
+				BufferedReader br = new BufferedReader( new FileReader(file));
+				
 				String line;
 				while((line = br.readLine()) != null) {
 					builder.append(line + "\n");
 				}
 				br.close();
-			} catch(IOException e) {
-				e.printStackTrace();
 			}
+			
+			return builder.toString();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		return builder.toString();
+		return "";
 	}	
 	
 	/*
@@ -54,6 +52,9 @@ public class Utils {
 		return (int)(seconds/60)+":"+addZero(seconds%60);
 	}
 	
+	/*
+	 * Hängt bei Zahlen mit einer Ziffer eine führende 0 an -> 9 = 09
+	 */
 	public static String addZero(int i) {
 		if(i < 10) {
 			return "0"+i;

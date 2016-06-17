@@ -10,7 +10,6 @@ public abstract class FieldObject {
 	protected BufferedImage backgorund;
 	protected boolean entranceable = true;
 	
-	
 	public BufferedImage getBackground() {
 		return this.backgorund;
 	}
@@ -28,9 +27,7 @@ public abstract class FieldObject {
 	}
 	
 	public boolean isEntranceable() {
-		return entranceable;
+		return this.entranceable;
 	}
 	
-	//public abstract boolean moveIn();
-
 }

@@ -42,14 +42,34 @@ public class MainFrame extends JFrame{
 
 	private static final long serialVersionUID = 1L;
 	
-	private JTable highscoreTable = new JTable();
-	private JComboBox<Integer> startLevelSelect;
-	private JComboBox<Figure> figureSelect;
-	private Settings settings;
-	private MainFrame thisFrame;
-	private Game gameWindow;
+	private Settings 	settings;
+	private MainFrame 	thisFrame;
+	private Game 		gameWindow;
+
+	private JLabel lblLevelSelectHighscore;
+	private JLabel lblLevelSelectStart;
+	private JLabel lblFigurSelectStart;
+	
+	private JPanel panelHighscoreSelect;
+	private JPanel panelHighscore;
+	private JPanel panelStart;
+	private JPanel panelStartLevel;
+	private JPanel panelStartFigur;
+	private JPanel panelServer;
+	
+	private JButton btnSave;
+	private JButton btnLoad;
+	private JButton btnStart;
+	
+	private JScrollPane scrollPaneHighscore;
+
+	private JComboBox<Integer> 	comboLevelSelectStart;
+	private JComboBox<Integer> 	comboLevelSelectHighscore;
+	private JComboBox<Figure> 	comboFigureSelectStart;
+
+	private JTable highscoreTable;
+	
 	private java.lang.reflect.Type playerListType = new TypeToken<ArrayList<Player>>(){}.getType();
-	private JComboBox<Integer> comboBoxLevelHighscore;
 	
 	/*
 	 * Create the application.
@@ -66,20 +86,7 @@ public class MainFrame extends JFrame{
 		this.setTitle("Frogger");
 		this.setBounds(100, 100, 270, 500);
 		this.setResizable(false);
-		this.addWindowListener(new WindowAdapter() {
-			
-			@Override
-			public void windowClosing(WindowEvent e) {
-				
-				/*
-				 * Server abgleich
-				 */
-			}
-			
-		});
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		// Definiere Layout für das gesamte Fenster 
 		this.getContentPane().setLayout(new FormLayout(new ColumnSpec[] {
 				FormSpecs.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("default:grow"),
@@ -92,33 +99,38 @@ public class MainFrame extends JFrame{
 				FormSpecs.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("default:grow"),
 				FormSpecs.RELATED_GAP_ROWSPEC,}));
+		this.addWindowListener(new WindowAdapter() {
+			
+			@Override
+			public void windowClosing(WindowEvent e) {
+				
+				/*
+				 * Server abgleich
+				 */
+			}
+			
+		});
 		
 		/*
 		 * Haupt Panel
 		 */
 		
-			/*
-			 * Server Panel
-			 */
-			JPanel pServer = new JPanel(new FormLayout(new ColumnSpec[] {
+			panelServer = new JPanel(new FormLayout(new ColumnSpec[] {
 					ColumnSpec.decode("default:grow"),},
 				new RowSpec[] {
 					RowSpec.decode("default:grow"),
 					FormSpecs.RELATED_GAP_ROWSPEC,
 					RowSpec.decode("default:grow"),}));
-			pServer.setBorder(new TitledBorder(null, "Server", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			this.getContentPane().add(pServer, "2, 2, fill, fill");
+			panelServer.setBorder(new TitledBorder(null, "Server", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			this.getContentPane().add(panelServer, "2, 2, fill, fill");
 			
-				JButton btnSave = new JButton("Speichern");
-				pServer.add(btnSave, "1, 1, default, fill");
+				btnSave = new JButton("Speichern");
+				panelServer.add(btnSave, "1, 1, default, fill");
 				
-				JButton btnLoad = new JButton("Laden");
-				pServer.add(btnLoad, "1, 3, default, fill");
+				btnLoad = new JButton("Laden");
+				panelServer.add(btnLoad, "1, 3, default, fill");
 		
-			/* 
-			 * Highscore Panel
-			 */
-			JPanel panelHighscore = new JPanel(new FormLayout(new ColumnSpec[] {
+			panelHighscore = new JPanel(new FormLayout(new ColumnSpec[] {
 					ColumnSpec.decode("default:grow"),},
 				new RowSpec[] {
 					RowSpec.decode("30px:grow"),
@@ -127,7 +139,7 @@ public class MainFrame extends JFrame{
 			panelHighscore.setBorder(new TitledBorder(null, "Highscore", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 			this.getContentPane().add(panelHighscore, "2, 4, fill, fill");
 				
-				JPanel panelHighscoreSelect = new JPanel(new FormLayout(new ColumnSpec[] {
+				panelHighscoreSelect = new JPanel(new FormLayout(new ColumnSpec[] {
 						ColumnSpec.decode("50px"),
 						FormSpecs.RELATED_GAP_COLSPEC,
 						ColumnSpec.decode("default:grow"),},
@@ -135,32 +147,32 @@ public class MainFrame extends JFrame{
 						RowSpec.decode("default:grow"),}));
 				panelHighscore.add(panelHighscoreSelect, "1, 1, fill, fill");
 		
-					JLabel levelSelectLabel = new JLabel("Level:");
-					panelHighscoreSelect.add(levelSelectLabel, "1, 1, left, default");
+					lblLevelSelectHighscore = new JLabel("Level:");
+					panelHighscoreSelect.add(lblLevelSelectHighscore, "1, 1, left, default");
 			
-					comboBoxLevelHighscore = new JComboBox<Integer>();
+					comboLevelSelectHighscore = new JComboBox<Integer>();
 					for(int i : levelList) {
-						comboBoxLevelHighscore.addItem(i);
+						comboLevelSelectHighscore.addItem(i);
 					}
-					comboBoxLevelHighscore.addActionListener(new ActionListener() {
+					comboLevelSelectHighscore.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 							reloadHighscore();
 						}
 					});
-					panelHighscoreSelect.add(comboBoxLevelHighscore, "3, 1, fill, default");
+					panelHighscoreSelect.add(comboLevelSelectHighscore, "3, 1, fill, default");
 				
 		
-				JScrollPane scrollPane = new JScrollPane();
-				scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-				scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-				scrollPane.setViewportView(highscoreTable);
-				panelHighscore.add(scrollPane, "1, 3, fill, fill");
+				scrollPaneHighscore = new JScrollPane();
+				scrollPaneHighscore.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+				scrollPaneHighscore.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+				panelHighscore.add(scrollPaneHighscore, "1, 3, fill, fill");
+								
+					highscoreTable = new JTable();
+					reloadHighscore();
+					scrollPaneHighscore.setViewportView(highscoreTable);
 					
 		
-			/*
-			 * Start Panel
-			 */
-			JPanel pStart = new JPanel(new FormLayout(new ColumnSpec[] {
+			panelStart = new JPanel(new FormLayout(new ColumnSpec[] {
 					ColumnSpec.decode("default:grow"),},
 				new RowSpec[] {
 					RowSpec.decode("30px:grow"),
@@ -168,61 +180,61 @@ public class MainFrame extends JFrame{
 					RowSpec.decode("30px:grow"),
 					FormSpecs.RELATED_GAP_ROWSPEC,
 					RowSpec.decode("default:grow"),}));
-			pStart.setBorder(new TitledBorder(null, "Starten", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			this.getContentPane().add(pStart, "2, 6, fill, fill");
+			panelStart.setBorder(new TitledBorder(null, "Starten", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			this.getContentPane().add(panelStart, "2, 6, fill, fill");
 		
-				JPanel pStartLevel = new JPanel(new FormLayout(new ColumnSpec[] {
+				panelStartLevel = new JPanel(new FormLayout(new ColumnSpec[] {
 						ColumnSpec.decode("50px"),
 						FormSpecs.RELATED_GAP_COLSPEC,
 						ColumnSpec.decode("default:grow"),},
 					new RowSpec[] {
 						RowSpec.decode("default:grow"),}));
-				pStart.add(pStartLevel, "1, 1, fill, fill");
+				panelStart.add(panelStartLevel, "1, 1, fill, fill");
 		
 		
-					JLabel lblLevel = new JLabel("Level:");
-					pStartLevel.add(lblLevel, "1, 1, left, default");
+					lblLevelSelectStart = new JLabel("Level:");
+					panelStartLevel.add(lblLevelSelectStart, "1, 1, left, default");
 				
-					startLevelSelect = new JComboBox<Integer>();
+					comboLevelSelectStart = new JComboBox<Integer>();
 					for(int i : levelList) {
-						startLevelSelect.addItem(i);
+						comboLevelSelectStart.addItem(i);
 					}
-					pStartLevel.add(startLevelSelect, "3,1,default,fill");
+					panelStartLevel.add(comboLevelSelectStart, "3,1,default,fill");
 				
-					JPanel pStartFigur = new JPanel(new FormLayout(new ColumnSpec[] {
+					panelStartFigur = new JPanel(new FormLayout(new ColumnSpec[] {
 							ColumnSpec.decode("50px"),
 							FormSpecs.RELATED_GAP_COLSPEC,
 							ColumnSpec.decode("default:grow"),},
 						new RowSpec[] {
 							RowSpec.decode("default:grow"),}));
-					pStart.add(pStartFigur, "1, 3, fill, fill");
+					panelStart.add(panelStartFigur, "1, 3, fill, fill");
 		
-						JLabel lblFigur = new JLabel("Figur:");
-						pStartFigur.add(lblFigur, "1, 1, left, default");
+						lblFigurSelectStart = new JLabel("Figur:");
+						panelStartFigur.add(lblFigurSelectStart, "1, 1, left, default");
 						
-						figureSelect = new JComboBox<Figure>();
+						comboFigureSelectStart = new JComboBox<Figure>();
 						for(Figure figure : settings.MEEPLES) 
-							figureSelect.addItem(figure);
-						pStartFigur.add(figureSelect, "3, 1, default, fill");
+							comboFigureSelectStart.addItem(figure);
+						panelStartFigur.add(comboFigureSelectStart, "3, 1, default, fill");
 		
-					JButton btnStart = new JButton("Starten");
+					btnStart = new JButton("Starten");
 					btnStart.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
-							int levelSelected = (int)startLevelSelect.getSelectedItem();
-							Figure figureSelected = (Figure)figureSelect.getSelectedItem();
+							int levelSelected = (int)comboLevelSelectStart.getSelectedItem();
+							Figure figureSelected = (Figure)comboFigureSelectStart.getSelectedItem();
 							
-							thisFrame.start(levelSelected, figureSelected);				
+							thisFrame.start(levelSelected, figureSelected, getBounds().x, getBounds().y);				
 						}
 					});
-					pStart.add(btnStart, "1, 5, default, fill");
+					panelStart.add(btnStart, "1, 5, default, fill");
 	}	
 	
 	/*
 	 * Baue ein neues Spielfenster
 	 */
-	public void start(int level, Figure figure) {
+	public void start(int level, Figure figure, int x, int y) {
 		if(Utils.checkLevel(level)) {
-			gameWindow = new Game(level, figure, thisFrame);
+			gameWindow = new Game(level, figure, thisFrame, x, y);
 			gameWindow.setVisible(true);
 			this.dispose();
 		} else {
@@ -243,7 +255,7 @@ public class MainFrame extends JFrame{
 		
 		try {
 			ArrayList<Integer> levelList = new ArrayList<Integer>();
-			BufferedReader br = new BufferedReader(new FileReader(Utils.class.getResource("/level/level.txt").getFile()));
+			BufferedReader br = new BufferedReader(new FileReader(new File("res/level/level.txt")));
 		
 			String s;
 			while((s = br.readLine()) != null) {
@@ -277,7 +289,7 @@ public class MainFrame extends JFrame{
 					player.sort(null);
 					
 					if(player.size() > 0)
-						return player.get(0).getiPoints();
+						return player.get(0).getTime();
 				}
 						
 			}
@@ -327,7 +339,7 @@ public class MainFrame extends JFrame{
 	 * Aktuallisiert die Highscoreliste
 	 */
 	public void reloadHighscore() {
-		int level = (int)comboBoxLevelHighscore.getSelectedItem();
+		int level = (int)comboLevelSelectHighscore.getSelectedItem();
 		try {
 			
 			ArrayList<Player> playerHighscore = null;

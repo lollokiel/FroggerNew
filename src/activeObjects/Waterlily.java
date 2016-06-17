@@ -15,23 +15,29 @@ public class Waterlily extends FieldObject implements Runnable {
 		this.playground = playground;
 	}
 
+	/*
+	 * Bei Eintritt auf Wasserrose wird Timer gestartet, nach 3 Sekunden verschwindet Sie und 
+	 * Spieler stirbt
+	 */
 	@Override
 	public void run() {
 		
 		int ms = 0;
-		while(playground.getMeeple().getFieldkoordinate().isSame(this.getFieldKoordinate()) && ms < 3000) {
+		while(this.playground.getMeeple().getFieldkoordinate().isSame(this.getFieldKoordinate()) && ms < 3000) {
+			
 			try {
 				Thread.sleep(300);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			
 			ms += 300;
 			
 			if(ms >= 3000) {
-				if(playground.getMeeple().getFieldkoordinate().isSame(this.getFieldKoordinate())) {
-					playground.removeWaterlily(this);
-					playground.die();
-					playground.repaint();
+				if(this.playground.getMeeple().getFieldkoordinate().isSame(this.getFieldKoordinate())) {
+					this.playground.removeWaterlily(this);
+					this.playground.die();
+					this.playground.repaint();
 				}
 			}
 		}

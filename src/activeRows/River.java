@@ -1,36 +1,37 @@
 package activeRows;
 
-import activeObjects.Trunk;
+import activeObjects.MovableObject;
 import frames.Playground;
 import utils.Settings;
 
 public class River extends ActiveRow {
-
-	private Settings s = new Settings();
 	
 	public River(int direction, int speed, int row, Playground playground) {
 		this.setDirection(direction);
 		this.setSpeed(speed);
 		this.setRow(row);
-		this.addMoveObject(new Trunk(s.TRUNK,120,this));
+		this.addMovableObject(new MovableObject(settings.TRUNK,120,this));
 		this.start();
 		this.playground = playground;
+		this.settings = playground.getGameFrame().getMainFrame().getSettings();
 	}
 	
 	@Override
 	public void run() {
 		while(this.playground.getMeeple().isAlive()) {
-			playground.lock.lock();
-				Trunk newTrunk = null;
+			this.playground.getLock().lock();
+			
+				MovableObject newTrunk;
 				if(this.getDirection() == 1) {
-					newTrunk = new Trunk(s.TRUNK,-70,this);
+					newTrunk = new MovableObject(this.settings.TRUNK,-70,this);
 				} else {
-					newTrunk = new Trunk(s.TRUNK,Settings.FIELDSIZE*Settings.COLS,this);
+					newTrunk = new MovableObject(this.settings.TRUNK, Settings.PLAYGROUND_WIDTH, this);
 				}
-				this.addMoveObject(newTrunk);
-			playground.lock.unlock();
+				this.addMovableObject(newTrunk);
+				
+				this.playground.getLock().unlock();
+			
 			try {
-
 				int t = 2000 + (int)(Math.random()*1000);
 				Thread.sleep(t);
 			} catch (InterruptedException e) {
