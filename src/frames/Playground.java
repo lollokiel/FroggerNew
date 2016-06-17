@@ -298,7 +298,7 @@ public class Playground extends JPanel {
 		
 		int btnWidth = 200;
 		JTextField wonNameField = new JTextField();
-		wonNameField.setBounds((int)((Settings.FIELDSIZE * Settings.COLS -btnWidth) * (3/4.0)), 530, 200, 50);
+		wonNameField.setBounds((int)((Settings.FIELDSIZE * Settings.COLS -btnWidth) * (3/4.0)), 530, 200, 250);
 		this.add(wonNameField);
 		
 	
@@ -317,7 +317,7 @@ public class Playground extends JPanel {
 		btnNextLevel.setBounds((Settings.FIELDSIZE * Settings.COLS -btnWidth) / 2, 600, btnWidth, 50);
 		this.add(btnNextLevel);
 		
-		JButton btnRestart = new JButton("Nochmal spielen");
+		JButton btnRestart = new JButton("<html>Nochmal<br>spielen</html>");
 		btnRestart.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -329,7 +329,7 @@ public class Playground extends JPanel {
 				gameFrame.getMainFrame().start(gameFrame.getLevel(), gameFrame.getFigure(), gameFrame.getBounds().x, gameFrame.getBounds().y);
 			}
 		});
-		btnRestart.setBounds(0, 0, 200, 20);
+		btnRestart.setBounds((int)((Settings.FIELDSIZE * Settings.COLS -btnWidth) * (1/10.0)), 610, 100, 50);
 		this.add(btnRestart);
 		
 		JButton btnSave = new JButton("Speichern");
@@ -342,9 +342,10 @@ public class Playground extends JPanel {
 				
 				gameFrame.setVisible(false);
 				gameFrame.getMainFrame().setVisible(true);
+			
 			}
 		});
-		btnSave.setBounds((int)((Settings.FIELDSIZE * Settings.COLS -btnWidth) * (3/4.0)), 550, btnWidth/2, 25);
+		btnSave.setBounds((int)((Settings.FIELDSIZE * Settings.COLS -btnWidth) * (9/10.0)), 550, 100, 30);
 		this.add(btnSave);
 	}
 	
