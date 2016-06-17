@@ -7,10 +7,11 @@ import utils.Settings;
 
 public class Street extends ActiveRow {
 	
-	public Street(int direction, int speed, int row, Playground playground) {
+	public Street(int direction, int speed, int row, int wdhSpeed, Playground playground) {
 		this.setDirection(direction);
 		this.setSpeed(speed);
 		this.setRow(row);
+		this.setWdhSpeed(wdhSpeed);
 		this.playground = playground;
 		this.settings = playground.getGameFrame().getMainFrame().getSettings();
 		
@@ -45,7 +46,8 @@ public class Street extends ActiveRow {
 			
 			try {
 
-				int t = 2000 + (int)(Math.random()*1000);
+				int t = (2000 + (int)(Math.random()*1000))*(500*getWdhSpeed());
+				t = 4000/getWdhSpeed()+(int)(Math.random()*5000);
 				Thread.sleep(t);
 			} catch (InterruptedException e) {
 				e.printStackTrace();

@@ -6,11 +6,11 @@ import activeRows.Street;
 import frames.Playground;
 import utils.Settings;
 
-public class MoveObject implements Runnable {
+public class MoveObjects implements Runnable {
 
 	private Playground playground;
 	
-	public MoveObject(Playground p) {
+	public MoveObjects(Playground p) {
 		this.playground = p;
 	}
 	

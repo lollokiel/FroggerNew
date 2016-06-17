@@ -28,7 +28,7 @@ import activeRows.ActiveRow;
 import activeRows.River;
 import activeRows.Street;
 import game.Meeple;
-import threads.MoveObject;
+import threads.MoveObjects;
 import utils.Countdown;
 import utils.FieldKoordinate;
 import utils.Settings;
@@ -86,7 +86,7 @@ public class Playground extends JPanel {
 		});
 		
 		// Thread zum Bewegen der Objekte
-		new Thread(new MoveObject(this)).start();
+		new Thread(new MoveObjects(this)).start();
 		
 	}		
 	
@@ -454,8 +454,9 @@ public class Playground extends JPanel {
 				
 				int speed = Integer.parseInt(rowSettings[1]);
 				int direction = Integer.parseInt(rowSettings[2]);
+				int wdhSpeed = Integer.parseInt(rowSettings[3]);
 						
-				rivers.add(new River(direction, speed, row, this));
+				rivers.add(new River(direction, speed, row, wdhSpeed, this));
 			}
 		}
 		
@@ -475,8 +476,9 @@ public class Playground extends JPanel {
 				
 				int speed = Integer.parseInt(rowSettings[1]);
 				int direction = Integer.parseInt(rowSettings[2]);
+				int wdhSpeed = Integer.parseInt(rowSettings[3]);
 						
-				streets.add(new Street(direction, speed, row, this));
+				streets.add(new Street(direction, speed, row, wdhSpeed, this));
 			}
 		}
 		

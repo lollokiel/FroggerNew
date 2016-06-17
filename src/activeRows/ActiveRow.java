@@ -15,6 +15,7 @@ public abstract class ActiveRow extends Thread {
 	private int speed;
 	private int direction;
 	private int row;
+	private int wdhSpeed;
 	private ArrayList<MovableObject> movableObjects = new ArrayList<MovableObject>();
 	
 	/*
@@ -32,6 +33,10 @@ public abstract class ActiveRow extends Thread {
 		return this.row;
 	}
 	
+	public int getWdhSpeed() {
+		return this.wdhSpeed;
+	}
+	
 	/*
 	 * Setter
 	 */	
@@ -46,6 +51,10 @@ public abstract class ActiveRow extends Thread {
 	public void setRow(int row) {
 		this.row = row;
 	}	
+	
+	public void setWdhSpeed(int wdhSpeed) {
+		this.wdhSpeed = wdhSpeed;
+	}
 	
 	/*
 	 * Other
