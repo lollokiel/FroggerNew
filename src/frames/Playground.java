@@ -310,8 +310,8 @@ public class Playground extends JPanel {
 		this.add(wonNameField);
 		
 	
-		JButton btnRestart = new JButton("Nächstes Level");
-		btnRestart.addActionListener(new ActionListener() {
+		JButton btnNextLevel = new JButton("Nächstes Level");
+		btnNextLevel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
@@ -322,8 +322,37 @@ public class Playground extends JPanel {
 				gameFrame.getMainFrame().start(gameFrame.getLevel()+1, gameFrame.getFigure(), gameFrame.getBounds().x, gameFrame.getBounds().y);
 			}
 		});
-		btnRestart.setBounds((Settings.FIELDSIZE * Settings.COLS -btnWidth) / 2, 600, btnWidth, 50);
+		btnNextLevel.setBounds((Settings.FIELDSIZE * Settings.COLS -btnWidth) / 2, 600, btnWidth, 50);
+		//this.add(btnNextLevel);
+		
+		JButton btnRestart = new JButton("Nochmal spielen");
+//		btnRestart.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				
+//				if(wonNameField.getText().length() > 0)
+//				
+//				gameFrame.setVisible(false);
+//				gameFrame.getMainFrame().start(gameFrame.getLevel(), gameFrame.getFigure(), gameFrame.getBounds().x, gameFrame.getBounds().y);
+//			}
+//		});
+		btnRestart.setVisible(true);
 		this.add(btnRestart);
+		
+		JButton btnSave = new JButton("Speichern");
+		btnSave.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if(wonNameField.getText().length() > 0)
+					gameFrame.getMainFrame().addPlayerToHighscore(gameFrame.getLevel(), wonNameField.getText(), gameFrame.getSeconds() );
+				
+				gameFrame.setVisible(false);
+				gameFrame.getMainFrame().setVisible(true);
+			}
+		});
+		btnSave.setBounds((int)((Settings.FIELDSIZE * Settings.COLS -btnWidth) * (3/4.0)), 550, btnWidth/2, 25);
+		this.add(btnSave);
 	}
 	
 	/*
