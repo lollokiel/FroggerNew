@@ -293,12 +293,12 @@ public class Playground extends JPanel {
 		Font f2 = new Font("Arial", Font.ITALIC , 20);
 		wonNameLabel.setFont(f2);
 		wonNameLabel.setForeground(Color.WHITE);
-		wonNameLabel.setBounds(160, 505, Settings.FIELDSIZE*Settings.COLS, 100);
+		wonNameLabel.setBounds(170, 505, Settings.FIELDSIZE*Settings.COLS, 100);
 		this.add(wonNameLabel);
 		
 		int btnWidth = 200;
 		JTextField wonNameField = new JTextField();
-		wonNameField.setBounds((int)((Settings.FIELDSIZE * Settings.COLS -btnWidth) * (3/4.0)), 530, 200, 250);
+		wonNameField.setBounds((int)((Settings.FIELDSIZE * Settings.COLS -btnWidth) * (3/4.0)), 540, 200, 25);
 		this.add(wonNameField);
 		
 	
@@ -345,7 +345,7 @@ public class Playground extends JPanel {
 			
 			}
 		});
-		btnSave.setBounds((int)((Settings.FIELDSIZE * Settings.COLS -btnWidth) * (9/10.0)), 550, 100, 30);
+		btnSave.setBounds(450, 610, 100, 30);
 		this.add(btnSave);
 	}
 	
