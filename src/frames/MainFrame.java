@@ -32,6 +32,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
+import server.Client;
 import utils.Figure;
 import utils.HighscoreTableModel;
 import utils.Player;
@@ -45,6 +46,7 @@ public class MainFrame extends JFrame{
 	private Settings 	settings;
 	private MainFrame 	thisFrame;
 	private Game 		gameWindow;
+	private Client		client;
 
 	private JLabel lblLevelSelectHighscore;
 	private JLabel lblLevelSelectStart;
@@ -76,6 +78,9 @@ public class MainFrame extends JFrame{
 	 */
 	public MainFrame() {
 				
+		// Client für Serververbindung
+		client = new Client();
+		
 		// Erstelle eine Settingsklasse 
 		settings = new Settings();
 
@@ -128,6 +133,28 @@ public class MainFrame extends JFrame{
 				panelServer.add(btnSave, "1, 1, default, fill");
 				
 				btnLoad = new JButton("Laden");
+				btnLoad.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						
+						ArrayList<Integer> serverLevelList = client.getLevelList();
+						ArrayList<Integer> localLevelList = readLevel();
+						
+						ArrayList<Integer> missingLevel = new ArrayList<Integer>();
+						for(int id : serverLevelList) {
+							boolean found = false;
+							for(int localId : localLevelList) {
+								if(id == localId) {
+									found = true;
+									break;
+								}
+							}
+							if(!found) missingLevel.add(id);
+						}
+						
+						System.out.println(missingLevel);
+						
+					}
+				});
 				panelServer.add(btnLoad, "1, 3, default, fill");
 		
 			panelHighscore = new JPanel(new FormLayout(new ColumnSpec[] {

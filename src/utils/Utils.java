@@ -75,4 +75,16 @@ public class Utils {
 	}
 	
 	
+	public static String getFolder(File file) {
+		File fileParent = file.getParentFile();
+		String pathParent = fileParent.getParent();
+		
+		String filePath = fileParent.getPath();
+		
+		String folder = filePath.substring(pathParent.length()+1, filePath.length());
+		return folder;
+		
+	}
+	
+	
 }

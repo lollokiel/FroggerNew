@@ -1,9 +1,14 @@
 package server;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 
 public class Server implements ServerServiceInterface {
 
@@ -12,22 +17,8 @@ public class Server implements ServerServiceInterface {
 	}
 
 	public static void main(String[] argv) {
+		
 
-		/*
-		 * Use
-		 * 		(1) LocateRegistry.createRegistry(...) 
-		 * 			Create and export a Registry instance on the local host that accepts requests 
-		 * 			on the specified port.
-		 * 
-		 * 		(2) UnicastRemoteObject.exportObject(...) 
-		 * 			Export the Remote object stub ( = instance of StudentServiceLoesung) to make 
-		 * 			it available to receive incoming calls
-		 *
-		 * 		(3) Registry.rebind(...) 
-		 * 			Replace the binding for a specified name (e.g., "StudentService")
-		 * 		  	in the Registry instance created in (1) with the supplied remote reference
-		 *
-		 */
 		try {
 			Registry registry = LocateRegistry.createRegistry(1099);
 						
@@ -41,4 +32,37 @@ public class Server implements ServerServiceInterface {
 			ex.printStackTrace();
 		}
 	}
+
+	@Override
+	public Level getLevelByID(int levelId) throws RemoteException {
+		
+		Level level = new Level(levelId);	
+//		ArrayList<ArrayList<String>> files = new ArrayList<ArrayList<String>>();
+//		
+//		for(LevelFile levelFile : level.getFiles()) {
+//			files.add(levelFile.getLines());
+//		}
+		
+		return level;
+	}
+
+	@Override
+	public ArrayList<Integer> getLevel() throws RemoteException {
+		ArrayList<Integer> level = new ArrayList<Integer>();
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(new File("res/server/level/list.txt")));
+		
+			String line;
+			while((line = br.readLine()) != null) {
+				level.add(Integer.parseInt(line));
+			}
+			br.close();
+			
+		} catch (NumberFormatException |IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return level;
+	}
+
 }
