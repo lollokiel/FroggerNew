@@ -100,7 +100,7 @@ public class Playground extends JPanel {
 	@Override
 	public void paintComponent(Graphics g) {
 		
-		lock.lock();
+		this.lock.lock();
 			Graphics2D g2 = (Graphics2D)g;
 			
 			// Zeichne den Hintergrund
@@ -140,31 +140,31 @@ public class Playground extends JPanel {
 			}
 			
 			// Countdown zu beginn des Spiels: 3,2,1, Los
-			if(countdown.seconds >= 0) {
-				countdownLabel.setVerticalAlignment(SwingConstants.CENTER);
-				countdownLabel.setHorizontalAlignment(SwingConstants.CENTER);
-				countdownLabel.setForeground(Color.white);
-				countdownLabel.setBounds(0, 500, Settings.FIELDSIZE*Settings.COLS, 200);
-				if(countdown.seconds > 0) {
-					countdownLabel.setFont(new Font("Calibri",0, countdown.seconds%100));
-					countdownLabel.setText((int)countdown.seconds/100+1+"");
+			if(this.countdown.seconds >= 0) {
+				this.countdownLabel.setVerticalAlignment(SwingConstants.CENTER);
+				this.countdownLabel.setHorizontalAlignment(SwingConstants.CENTER);
+				this.countdownLabel.setForeground(Color.white);
+				this.countdownLabel.setBounds(0, 500, Settings.FIELDSIZE*Settings.COLS, 200);
+				if(this.countdown.seconds > 0) {
+					this.countdownLabel.setFont(new Font("Calibri",0, this.countdown.seconds%100));
+					this.countdownLabel.setText((int)this.countdown.seconds/100+1+"");
 				} else {
-					this.remove(countdownLabel);
+					this.remove(this.countdownLabel);
 				}
 				this.add(this.countdownLabel);
 				
 			}
 	
 			// Game Over Bild
-			if(!meeple.isAlive() && !win)
-				g2.drawImage(settings.GAMEOVER, 175, 200, 250, 240, null);
+			if(!this.meeple.isAlive() && !win)
+				g2.drawImage(this.settings.GAMEOVER, 175, 200, 250, 240, null);
 			
 			// Level complete Bild
-			if(win){
-				g2.drawImage(settings.LEVELCOMPLETE, (settings.PLAYGROUND_WIDTH-350)/2, 100, 350, 350, null);
+			if(this.win){
+				g2.drawImage(this.settings.LEVELCOMPLETE, (Settings.PG_WIDTH-350)/2, 100, 350, 350, null);
 			}
 		
-		lock.unlock();
+		this.lock.unlock();
 		
 	}
 	
@@ -186,96 +186,93 @@ public class Playground extends JPanel {
 								
 				lock.lock();
 				
-				// Definiere neue Reihe
-				int newRow = meeple.getRow();
-				if(e.getKeyCode() == 38 && meeple.getRow() > 0) {
-					newRow--;
-				} else
-				if(e.getKeyCode() == 40 && meeple.getRow() < Settings.ROWS-1) {
+					// Definiere neue Reihe
+					int newRow = meeple.getRow();
+					if(e.getKeyCode() == 38 && meeple.getRow() > 0) {
+						newRow--;
+					} else
+					if(e.getKeyCode() == 40 && meeple.getRow() < Settings.ROWS-1) {
 						newRow++;
-				}
-				
-				River riverTo = null;
-				for(River river : getRiver()) {
-					if(river.getRow() == newRow) {
-						riverTo = river;
-						break;
 					}
-				}
-				
-				// Spielfigur geht auf Fluss
-				if(riverTo != null) { 
 					
-					if(e.getKeyCode() == 37 || e.getKeyCode() == 39) {
-													
-						int newX = meeple.getX();
-						if(e.getKeyCode() == 37) {
-							newX -= Settings.FIELDSIZE;
-						} else {
-							newX += Settings.FIELDSIZE;
+					River riverTo = null;
+					for(River river : getRiver()) {
+						if(river.getRow() == newRow) {
+							riverTo = river;
+							break;
 						}
+					}
+					
+					// Spielfigur geht auf Fluss
+					if(riverTo != null) { 
 						
-						if(newX - meeple.getMoveableObject().getX() < 0 || (newX + Settings.FIELDSIZE) - (meeple.getMoveableObject().getX()+meeple.getMoveableObject().getWidth()) > 0) {
-							die();
+						if(e.getKeyCode() == 37 || e.getKeyCode() == 39) {
+														
+							int newX = meeple.getX();
+							if(e.getKeyCode() == 37) {
+								newX -= Settings.FIELDSIZE;
+							} else {
+								newX += Settings.FIELDSIZE;
+							}
+							
+							if(newX - meeple.getMoveableObject().getX() < 0 || (newX + Settings.FIELDSIZE) - (meeple.getMoveableObject().getX()+meeple.getMoveableObject().getWidth()) > 0) {
+								die();
+							}
+							meeple.moveTo(newX, meeple.getY());
+						} else {
+	
+							if(meeple.getMoveableObject() != null) {
+								meeple.getMoveableObject().setMeepleOn(null);
+								meeple.setMoveableObject(null);
+							}
+							
+							for(MovableObject obj : riverTo.getMoveableObjects()) {
+								if(obj.getX() < meeple.getMiddleX() && obj.getX() + obj.getWidth() > meeple.getMiddleX()) {
+									meeple.setMoveableObject(obj);
+									break;
+								}
+							}
+							
+							int newX = 0;
+							if(meeple.getMoveableObject() == null) {
+								newX = meeple.getX();
+								die();
+							} else {
+								newX = meeple.getMoveableObject().getX()+(Settings.FIELDSIZE)*
+										((int)((meeple.getMiddleX()-meeple.getMoveableObject().getX()) / Settings.FIELDSIZE));																
+							}
+							meeple.moveTo(newX, newRow*Settings.FIELDSIZE);	
+							
 						}
-						meeple.moveTo(newX, meeple.getY());
-					} else {
-
+					} else {	// Spielfigur geht auf anderem Feld
+						
+						meeple.moveField(e.getKeyCode());
+						
 						if(meeple.getMoveableObject() != null) {
 							meeple.getMoveableObject().setMeepleOn(null);
 							meeple.setMoveableObject(null);
 						}
-						
-						for(MovableObject obj : riverTo.getMoveableObjects()) {
-							if(obj.getX() < meeple.getMiddleX() && obj.getX() + obj.getWidth() > meeple.getMiddleX()) {
-								meeple.setMoveableObject(obj);
-								break;
+					}		
+					
+					//Check ob auf Loch oder Wasserrose
+					for(FieldObject obj : getObjectStructure()) {
+						if(obj.getFieldKoordinate().isSame(meeple.getFieldkoordinate())) {
+							if(obj.getClass() == Pit.class) {
+								die();
+							} else if(obj.getClass() == Waterlily.class) {
+								Waterlily waterlily = (Waterlily)obj;
+								new Thread(waterlily).start();
 							}
-						}
-						
-						int newX = 0;
-						if(meeple.getMoveableObject() == null) {
-							newX = meeple.getX();
-							die();
-						} else {
-							newX = meeple.getMoveableObject().getX()+(Settings.FIELDSIZE)*
-									((int)((meeple.getMiddleX()-meeple.getMoveableObject().getX()) / Settings.FIELDSIZE));																
-						}
-						meeple.moveTo(newX, newRow*Settings.FIELDSIZE);	
-						
+						} 
 					}
-				} else {	// Spielfigur geht auf anderem Feld
 					
-					meeple.moveField(e.getKeyCode());
 					
-					if(meeple.getMoveableObject() != null) {
-						meeple.getMoveableObject().setMeepleOn(null);
-						meeple.setMoveableObject(null);
+					if(meeple.getY() == 0) {
+						win();
 					}
-				}
-				
-				//Check ob auf Wasserrose
-				
-				
-				//Check ob auf Loch oder Wasserrose
-				for(FieldObject obj : getObjectStructure()) {
-					if(obj.getFieldKoordinate().isSame(meeple.getFieldkoordinate())) {
-						if(obj.getClass() == Pit.class) {
-							die();
-						} else if(obj.getClass() == Waterlily.class) {
-							Waterlily waterlily = (Waterlily)obj;
-							new Thread(waterlily).start();
-						}
-					} 
-				}
-				
-				
-				if(meeple.getY() == 0) {
-					win();
-				}
 				
 				lock.unlock();
-				repaint();
+				this.repaint();
 				
 			}
 		}
@@ -301,21 +298,31 @@ public class Playground extends JPanel {
 		wonNameField.setBounds(260, 540, 200, 25);
 		this.add(wonNameField);
 		
-	
-		JButton btnNextLevel = new JButton("Nächstes Level");
-		btnNextLevel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				if(wonNameField.getText().length() > 0)
-					gameFrame.getMainFrame().addPlayerToHighscore(gameFrame.getLevel(), wonNameField.getText(), gameFrame.getSeconds() );
-				
-				gameFrame.setVisible(false);
-				gameFrame.getMainFrame().start(gameFrame.getLevel()+1, gameFrame.getFigure(), gameFrame.getBounds().x, gameFrame.getBounds().y);
+		boolean hasNext = false;
+		ArrayList<Integer> levelList = this.gameFrame.getMainFrame().readLevel();
+		for(int i = 0; i < levelList.size(); i++) {
+			if(levelList.get(i) == this.level && i < levelList.size()-1) {
+				hasNext = true;				
+				break;
 			}
-		});
-		btnNextLevel.setBounds((Settings.FIELDSIZE * Settings.COLS -btnWidth) / 2, 600, btnWidth, 50);
-		this.add(btnNextLevel);
+		}
+		
+		if(hasNext) {
+			JButton btnNextLevel = new JButton("Nächstes Level");
+			btnNextLevel.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					
+					if(wonNameField.getText().length() > 0)
+						gameFrame.getMainFrame().addPlayerToHighscore(gameFrame.getLevel(), wonNameField.getText(), gameFrame.getSeconds() );
+					
+					gameFrame.setVisible(false);
+					gameFrame.getMainFrame().start(gameFrame.getLevel()+1, gameFrame.getFigure(), gameFrame.getBounds().x, gameFrame.getBounds().y);
+				}
+			});
+			btnNextLevel.setBounds((Settings.FIELDSIZE * Settings.COLS -btnWidth) / 2, 600, btnWidth, 50);
+			this.add(btnNextLevel);
+		}
 		
 		JButton btnRestart = new JButton("<html>Nochmal<br>spielen</html>");
 		btnRestart.addActionListener(new ActionListener() {
@@ -341,6 +348,7 @@ public class Playground extends JPanel {
 					gameFrame.getMainFrame().addPlayerToHighscore(gameFrame.getLevel(), wonNameField.getText(), gameFrame.getSeconds() );
 				
 				gameFrame.setVisible(false);
+				gameFrame.getMainFrame().reloadHighscore();
 				gameFrame.getMainFrame().setVisible(true);
 			
 			}
@@ -349,8 +357,13 @@ public class Playground extends JPanel {
 		this.add(btnSave);
 	}
 	
-	/*
-	 * Spielfigur stibt
+	/**
+	 * Die Spielfigur stirbt
+	 * Führt zu:
+	 * - Anzeige des Game-Over Bildes & Neustarten Button
+	 * - Unbeweglichkeit der Spielfigur
+	 * - Ende des Timers
+	 * - Keine neuen Elemente werden hinzugefügt
 	 */
 	public void die() {
 		this.meeple.setAlive(false);
@@ -372,8 +385,8 @@ public class Playground extends JPanel {
 	 * Struktur Methoden (Hintergrund, Objekte, Reihen,...)
 	 */
 	
-		/*
-		 * Erstellt aus einer Datei ein Array mit der Hintergrundstruktur
+		/**
+		 * Ließt Datei für die Hintergrundstruktur und erstellt ein Array mit Reihentypen
 		 */
 		private void readBackgroundStructure() {
 			String[] backgroundStructureLines = Utils.readFile("/level/backgroundStructure/"+this.level+".txt").split("\n");
@@ -383,21 +396,14 @@ public class Playground extends JPanel {
 				switch(rowSettings[0]) {
 					case "2": this.addRiver(rowSettings, i); break;
 					case "3": this.addStreet(rowSettings, i); break;
-					default: rows.add(settings.GRASS); break;
+					default: this.rows.add(settings.GRASS); break;
 				}
 				i++;
 			}
 		}
 		
-		/*
-		 * Funktion Gibt die Hintergrundstruktur zurück
-		 */
-		public ArrayList<BufferedImage> getBackgroundStructure() {
-			return rows;
-		}
-		
-		/*
-		 * Erstellt aus einer Datei ein Array mit der Objektstruktur
+		/**
+		 * Ließt Datei für die Objektstruktur und erstellt für jeden Objekttyp ein Array mit Objekten
 		 */
 		private void readObjectStructure() {
 			String[] objectStructureLines = Utils.readFile("/level/objectStructure/"+this.level+".txt").split("\n");
@@ -407,89 +413,83 @@ public class Playground extends JPanel {
 				for(int col = 0; col < rowStructure.length; col++) {
 					int objectType = Integer.parseInt(rowStructure[col]);
 					if(objectType == 1) {
-						trees.add(new Tree(new FieldKoordinate(col, row), settings.TREE));
+						this.trees.add(new Tree(new FieldKoordinate(col, row), this.settings.TREE));
 					} else
 					if(objectType == 2) {
-						pits.add(new Pit(new FieldKoordinate(col, row), settings.PIT));
+						this.pits.add(new Pit(new FieldKoordinate(col, row), this.settings.PIT));
 					} else
 					if(objectType == 3) {
-						waterlilies.add(new Waterlily(new FieldKoordinate(col, row), settings.WATERLILY, this));
+						this.waterlilies.add(new Waterlily(new FieldKoordinate(col, row), this.settings.WATERLILY, this));
 					}
 				}
 			}
 		}
 		
-		/*
-		 * Funktion gibt alle objekte in einer ArrayList zurück
+		/**
+		 * Fügt alle Objektarrays zu einem zusammen und gibt die Liste zurück
+		 * @return Liste aller Objekte auf dem Spielfeld
 		 */
 		public ArrayList<FieldObject> getObjectStructure() {
 			ArrayList<FieldObject> returnObjects = new ArrayList<FieldObject>();
 			
-			returnObjects.addAll(trees);
-			returnObjects.addAll(waterlilies);
-			returnObjects.addAll(pits);
+			returnObjects.addAll(this.trees);
+			returnObjects.addAll(this.waterlilies);
+			returnObjects.addAll(this.pits);
 			
 			return returnObjects;
 		}
 		
-		/*
-		 * Funktion löscht Wasserrose aus Liste
+		/**
+		 * Löscht eine Wasserrose aus der Liste der Wasserrosen
+		 * @param waterlily Objekt der Wasserrose, das gelöscht werden soll
+		 * @return true wenn löschen erfolgreich; false wenn nicht
 		 */
 		public boolean removeWaterlily(Waterlily waterlily) {
-			return waterlilies.remove(waterlily);
+			return this.waterlilies.remove(waterlily);
 		}
 		
-		/*
-		 * Füge der Struktur einen Fluss hinzu
+		/**
+		 * Fügt der Liste mit Flüssen einen Fluss hinzu
+		 * @param rowSettings String mit Einstellungen für den Fluss ( Geschwindigkeit, Richtung, Wiederholungsrate)
+		 * @param row int-Wert, in welche Reihe der Fluss hinzugefügt werden soll
 		 */
 		private void addRiver(String[] rowSettings, int row) {
 			if(rowSettings.length == 4) {
-				rows.add(this.settings.WATER); 
+				this.rows.add(this.settings.WATER); 
 				
 				int speed = Integer.parseInt(rowSettings[1]);
 				int direction = Integer.parseInt(rowSettings[2]);
 				int wdhSpeed = Integer.parseInt(rowSettings[3]);
 						
-				rivers.add(new River(direction, speed, row, wdhSpeed, this));
+				this.rivers.add(new River(direction, speed, row, wdhSpeed, this));
 			}
 		}
 		
-		/*
-		 * Gib alle Flüsse zurück
-		 */
-		public ArrayList<River> getRiver() {
-			return rivers;
-		}
-		
-		/*
-		 * Füge der Struktur eine Straße hinzu
+		/**
+		 * Fügt dem Spielfeld eine Straße hinzu
+		 * @param rowSettings Einstellungen der Straße (Richtung, Geschwindigkeit, Wiederholungsrate)
+		 * @param row int-Wert der Reihe, in der die Straße eingefügt werden soll 
 		 */
 		private void addStreet(String[] rowSettings, int row) {
 			if(rowSettings.length == 4) {
-				rows.add(this.settings.STREET); 
+				this.rows.add(this.settings.STREET); 
 				
 				int speed = Integer.parseInt(rowSettings[1]);
 				int direction = Integer.parseInt(rowSettings[2]);
 				int wdhSpeed = Integer.parseInt(rowSettings[3]);
 						
-				streets.add(new Street(direction, speed, row, wdhSpeed, this));
+				this.streets.add(new Street(direction, speed, row, wdhSpeed, this));
 			}
 		}
 		
-		/*
-		 * Gib alle Straßen zurück
-		 */
-		public ArrayList<Street> getStreets() {
-			return streets;
-		}
-		
-		/*
-		 * Gib alle aktiven Reihen zurück ( Straßen & Flüsse)
+		/**
+		 * Fügt alle Reihen zu einer Liste zusammen und gibt diese Zurück
+		 * @return
 		 */
 		public ArrayList<ActiveRow> getRows() {
 			ArrayList<ActiveRow> rows = new ArrayList<ActiveRow>();
-			rows.addAll(streets);
-			rows.addAll(rivers);
+			rows.addAll(this.streets);
+			rows.addAll(this.rivers);
 			return rows;
 		}
 	
@@ -497,8 +497,10 @@ public class Playground extends JPanel {
 	 * Methoden zum Zeichnen von Elementen 
 	 */
 	
-		/*
-		 * Zeichne alle Holzstämme auf Flüssen
+		/**
+		 * Zeichne alle Holzstämme aller Flüsse auf die Graphik
+		 * @param g2 Graphik des Spielfeldes, auf der Gezeichnet wird
+		 * @return Graphik mit gezeichneten Objekten
 		 */
 		private Graphics2D paintRiver(Graphics2D g2) {
 			for(River row : this.getRiver()) {
@@ -509,8 +511,10 @@ public class Playground extends JPanel {
 			return g2;
 		}
 		
-		/*
-		 * Zeichne alle Autos/Motorräder auf Straßen
+		/**
+		 * Zeichne alle Autos aller Straßen auf die Graphik
+		 * @param g2 Graphik des Spielfeldes, auf der Gezeichnet wird
+		 * @return Graphik mit gezeichneten Objekten
 		 */
 		private Graphics2D paintStreet(Graphics2D g2) {
 			for(Street row : this.getStreets()) {
@@ -521,11 +525,13 @@ public class Playground extends JPanel {
 			return g2;
 		}
 		
-		/*
-		 * Zeichne Spielfigur
+		/**
+		 * Zeichne Spielfigur auf das Spielfeld
+		 * @param g2 Graphik auf der gezeichnet wird
+		 * @return Graphik mit gezeichneter Spielfigur
 		 */
 		private Graphics2D paintMeeple(Graphics2D g2) {
-			g2.drawImage(meeple.getImage(), meeple.getX(), meeple.getY(), Settings.FIELDSIZE, Settings.FIELDSIZE, null);
+			g2.drawImage(this.meeple.getImage(), this.meeple.getX(), this.meeple.getY(), Settings.FIELDSIZE, Settings.FIELDSIZE, null);
 			return g2;
 		}
 	
@@ -533,19 +539,31 @@ public class Playground extends JPanel {
 	 * Getter
 	 */
 	public Countdown getCountdown() {
-		return countdown;
+		return this.countdown;
 	}
 	
 	public Game getGameFrame() {
-		return gameFrame;
+		return this.gameFrame;
 	}
 	
 	public Meeple getMeeple() {
-		return meeple;
+		return this.meeple;
 	}
 	
 	public Lock getLock() {
-		return lock;
+		return this.lock;
 	}
 
+	public ArrayList<Street> getStreets() {
+		return this.streets;
+	}
+	
+	public ArrayList<River> getRiver() {
+		return this.rivers;
+	}
+	
+	public ArrayList<BufferedImage> getBackgroundStructure() {
+		return this.rows;
+	}
+	
 }

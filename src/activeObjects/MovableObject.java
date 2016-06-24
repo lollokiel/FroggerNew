@@ -18,45 +18,73 @@ public class MovableObject {
 		this.row = row;
 	}
 	
-	/*
-	 * Getter
+	/**
+	 * Gibt die x-Koordinate des Objektes zurück.
+	 * @return die x-Koordinate des Objektes
 	 */
 	public int getX() {
 		return this.x;
 	}
 		
+	/**
+	 * Gibt das Bildobjekt des Objektes zurück.
+	 * @return die Bilddatei des Objektes
+	 */
 	public BufferedImage getBackground() {
 		return this.background;
 	}
 	
+	/**
+	 * Gibt die Breite des Objektes zurück.
+	 * @return die Breite des Objektes
+	 */
 	public int getWidth() {
 		return this.background.getWidth();
 	}
 	
+	/**
+	 * Gibt die Höhe des Objektes zurück
+	 * @return die Höhe des Objektes
+	 */
 	public int getHeight() {
 		return this.background.getHeight();
 	}
 	
+	/**
+	 * Gibt die Reihe zurück, in der das Objekt liegt.
+	 * @return die Reihe des Objektes
+	 */
 	public ActiveRow getRow() {
 		return this.row;
 	}
 	
+	/**
+	 * Gibt das Spielfigurenobjekt zurück, das sich ggf. auf dem Objekt befindet
+	 * @return Spielfigurenobjekt, das auf dem Objekt ist
+	 */
 	public Meeple getMeeple() {
 		return this.meepleOn;
 	}
 	
-	/*
-	 * Setter
+	/**
+	 * Verändert das Hintergrundbild des Objektes.
+	 * @param background als BufferedImage
 	 */
 	public void setBackground(BufferedImage background) {
 		this.background = background;
 	}
+	
+	/**
+	 * Verändert die Spielfigur, die auf dem Objekt ist.
+	 * @param meeple vom Typ Meeple; Spielfigur, die mit dem Objekt gehen soll
+	 */
 	public void setMeepleOn(Meeple meeple) {
 		this.meepleOn = meeple;
 	}
 	
-	/*
-	 * Other
+	/**
+	 * Erhöht die x-Koordinate
+	 * @param dif int Wert, um den sich die x-Koordinate verändert
 	 */
 	public void raiseX(int dif) {
 		this.x += dif;

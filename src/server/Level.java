@@ -12,9 +12,6 @@ import utils.Utils;
 
 public class Level implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private int levelId;
 	private ArrayList<LevelFile> files = new ArrayList<LevelFile>();
@@ -76,6 +73,21 @@ public class Level implements Serializable {
 		}
 		
 		return false;
+	}
+	
+	public boolean hasFile(String name) {
+		
+		boolean found = false;
+		
+		for(LevelFile file : files) {
+			if(file.getName().equals(name) ) {
+				found = true;
+				break;
+			}
+		}
+		
+		return found;
+		
 	}
 	
 }

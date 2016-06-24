@@ -22,33 +22,25 @@ public class Client {
 			e.printStackTrace();
 		}
 	}
-	void start() {
-				
-
-			/*
-				ArrayList<ArrayList<String>> levelFiles = stub.getLevelByID(1);
-				for(ArrayList<String> file : levelFiles) {
-					for(String line : file) {
-						System.out.println(line);
-					}
-					System.out.println();
-				}
-			*/
-//			ArrayList<Integer> level = stub.getLevel();
-//			for(int i : level) {
-//				System.out.println(i);
-//			}
-			
-			//Level le = stub.getLevelByID(1);
-//			for(LevelFile file : le.getFiles()) {
-//				System.out.println("File: "+file.getName());
-//				for(String line : file.getLines()) {
-//					System.out.println(line);
-//				}
-//			}
-		
+	
+	/**
+	 * Übergibt alle nötigen Dateien für ein Level
+	 * @param id LevelID
+	 * @return Levelobjekt mit allen Leveldateien
+	 */
+	public Level getLevel(int id) {
+		try {
+			return stub.getLevelByID(id);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
+	/**
+	 * Übergibt Liste der Levelnummern
+	 * @return Levelnummern
+	 */
 	public ArrayList<Integer> getLevelList() {
 		ArrayList<Integer> level = new ArrayList<Integer>();
 		try {
@@ -57,5 +49,17 @@ public class Client {
 			e.printStackTrace();
 		}
 		return level;
+	}
+	
+	/**
+	 * @return Übergibt alle Level mit allen Leveldateien
+	 */
+	public ArrayList<Level> getAllLevel() {
+		try {
+			return stub.getAllLevel();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

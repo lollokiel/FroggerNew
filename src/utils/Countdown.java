@@ -6,16 +6,17 @@ public class Countdown implements Runnable {
 	
 	@Override
 	public void run() {
-			while(seconds >= 0) {
-				
-				try {
-					Thread.sleep(10);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				seconds--;
-
+		
+		while(seconds >= 0) {
+			
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
+			seconds--;
+
+		}
 		
 	}	
 	

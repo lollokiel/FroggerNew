@@ -29,19 +29,10 @@ public class Game extends JFrame {
 	private MainFrame 	mainframe;
 	private Playground 	playground;
 	private Figure 		figure;
-	
 	private Timer timer = new Timer(this);
-
-	private JPanel panelClock;
-	private JPanel panelSettingsBar;
-	
+	private JPanel panelClock, panelSettingsBar;
 	private JButton btnGiveup;
-
-	private JLabel lblTimer;
-	private JLabel lblLevel;
-	private JLabel lblBesttime;
-	private JLabel lblBestzeit;
-	private JLabel lblZeit;
+	private JLabel lblTimer, lblLevel, lblBesttime, lblBestzeit, lblZeit;
 	
 	
 	public Game(int levelNum, Figure figure, MainFrame frameFrogger, int posX, int posY) {
@@ -68,15 +59,15 @@ public class Game extends JFrame {
 			}
 		});
 		
-			panelSettingsBar = new JPanel(new FormLayout(new ColumnSpec[] {
+			this.panelSettingsBar = new JPanel(new FormLayout(new ColumnSpec[] {
 					ColumnSpec.decode(this.getWidth()/3+"px"),
 					ColumnSpec.decode(this.getWidth()/3+"px"),
 					ColumnSpec.decode(this.getWidth()/3+"px"),},
 				new RowSpec[] {
 					RowSpec.decode("default:grow"),}));
-			getContentPane().add(panelSettingsBar, "1, 1, fill, fill");
+			this.getContentPane().add(this.panelSettingsBar, "1, 1, fill, fill");
 		
-				panelClock = new JPanel(new FormLayout(new ColumnSpec[] {
+				this.panelClock = new JPanel(new FormLayout(new ColumnSpec[] {
 						FormSpecs.RELATED_GAP_COLSPEC,
 						ColumnSpec.decode("90px"),
 						FormSpecs.RELATED_GAP_COLSPEC,
@@ -85,56 +76,61 @@ public class Game extends JFrame {
 						RowSpec.decode("default:grow"),
 						FormSpecs.RELATED_GAP_ROWSPEC,
 						RowSpec.decode("default:grow"),}));
-				panelSettingsBar.add(panelClock, "1, 1, fill, fill");
+				this.panelSettingsBar.add(this.panelClock, "1, 1, fill, fill");
 		
-					lblZeit = new JLabel("Zeit:");
-					panelClock.add(lblZeit, "2, 1");
+					this.lblZeit = new JLabel("Zeit:");
+					this.panelClock.add(this.lblZeit, "2, 1");
 		
-					lblTimer = new JLabel(Utils.getTime(0));
-					panelClock.add(lblTimer, "4, 1, fill, default");
+					this.lblTimer = new JLabel(Utils.getTime(0));
+					this.panelClock.add(this.lblTimer, "4, 1, fill, default");
 		
-					lblBestzeit = new JLabel("Bestzeit:");
-					panelClock.add(lblBestzeit, "2, 3");
+					this.lblBestzeit = new JLabel("Bestzeit:");
+					this.panelClock.add(this.lblBestzeit, "2, 3");
 		
-					lblBesttime = new JLabel();
-					int best = mainframe.readBest(levelNum);
-						if(best > 0) lblBesttime.setText(Utils.getTime(best));
-						else lblBesttime.setText("-:--");
-					panelClock.add(lblBesttime, "4, 3, fill, default");
+					this.lblBesttime = new JLabel();
+					int best = this.mainframe.readBest(levelNum);
+						if(best > 0) 	this.lblBesttime.setText(Utils.getTime(best));
+						else 			this.lblBesttime.setText("-:--");
+						this.panelClock.add(this.lblBesttime, "4, 3, fill, default");
 		
-				lblLevel = new JLabel("Level "+level);
-				lblLevel.setHorizontalAlignment(SwingConstants.CENTER);
-				panelSettingsBar.add(lblLevel, "2, 1, fill, default");
+				this.lblLevel = new JLabel("Level "+this.level);
+				this.lblLevel.setHorizontalAlignment(SwingConstants.CENTER);
+				this.panelSettingsBar.add(this.lblLevel, "2, 1, fill, default");
 		
-				btnGiveup = new JButton("Aufgeben");
-				btnGiveup.addActionListener(new ActionListener() {
+				this.btnGiveup = new JButton("Aufgeben");
+				this.btnGiveup.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						closeWindow();
 					}
 				});
-				btnGiveup.setFocusable(false);
-				panelSettingsBar.add(btnGiveup, "3, 1, default, fill");
+				this.btnGiveup.setFocusable(false);
+				this.panelSettingsBar.add(this.btnGiveup, "3, 1, default, fill");
 
 		
-			playground = new Playground(this);
-			playground.requestFocus();
-			playground.setFocusable(true);
-			getContentPane().add(playground, "1, 3, fill, fill");
+			this.playground = new Playground(this);
+			this.playground.requestFocus();
+			this.playground.setFocusable(true);
+			this.getContentPane().add(this.playground, "1, 3, fill, fill");
 		
 	}
 	
-	/*
-	 * Schließt das Spielfenster
+	/**
+	 * Füllt den Timer mit der übergebenden Zeit
+	 * @param seconds Sekunden, die angezeigt werden sollen; Umrechnung in Minuten u. Sekunden erfolgt später
+	 */
+	public void setTimer(int seconds) {
+		this.lblTimer.setText(Utils.getTime(seconds));
+	}
+	
+	/**
+	 * Schließt das Spielfenster.
+	 * Dabei wird das Hauptfenster gestartet sichtbar.
 	 */
 	private void closeWindow() {
 		this.dispose();
 		this.playground.getMeeple().setAlive(false);
 		this.mainframe.setVisible(true);
 		this.mainframe.reloadHighscore();
-	}
-		
-	public void setTimer(int seconds) {
-		this.lblTimer.setText(Utils.getTime(seconds));
 	}
 	
 	/*

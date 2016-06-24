@@ -17,8 +17,6 @@ public class Server implements ServerServiceInterface {
 	}
 
 	public static void main(String[] argv) {
-		
-
 		try {
 			Registry registry = LocateRegistry.createRegistry(1099);
 						
@@ -33,19 +31,19 @@ public class Server implements ServerServiceInterface {
 		}
 	}
 
+	/**
+	 * Gibt alle Leveldatein eines Levels zurück
+	 */
 	@Override
 	public Level getLevelByID(int levelId) throws RemoteException {
 		
-		Level level = new Level(levelId);	
-//		ArrayList<ArrayList<String>> files = new ArrayList<ArrayList<String>>();
-//		
-//		for(LevelFile levelFile : level.getFiles()) {
-//			files.add(levelFile.getLines());
-//		}
-		
+		Level level = new Level(levelId);		
 		return level;
 	}
 
+	/**
+	 * Gibt alle Levelnummern der Level, die auf dem Serverliegen, zurück
+	 */
 	@Override
 	public ArrayList<Integer> getLevel() throws RemoteException {
 		ArrayList<Integer> level = new ArrayList<Integer>();
@@ -59,10 +57,21 @@ public class Server implements ServerServiceInterface {
 			br.close();
 			
 		} catch (NumberFormatException |IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return level;
+	}
+
+	/**
+	 * Gibt alle Leveldateien aller Level zurück
+	 */
+	@Override
+	public ArrayList<Level> getAllLevel() throws RemoteException {
+		ArrayList<Integer> levelNumList = getLevel();
+		ArrayList<Level> levelList = new ArrayList<Level>();
+		for(int l : levelNumList)
+			levelList.add(getLevelByID(l));
+		return levelList;
 	}
 
 }

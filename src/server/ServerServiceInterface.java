@@ -10,4 +10,6 @@ public interface ServerServiceInterface extends Remote {
 	
 	public ArrayList<Integer> getLevel() throws RemoteException;
 	
+	public ArrayList<Level> getAllLevel() throws RemoteException;
+	
 }

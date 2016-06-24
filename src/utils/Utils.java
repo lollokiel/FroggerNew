@@ -2,9 +2,12 @@ package utils;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 
@@ -83,6 +86,31 @@ public class Utils {
 		
 		String folder = filePath.substring(pathParent.length()+1, filePath.length());
 		return folder;
+	}
+	
+	public static void createFile(String name, String path, Iterable<String> lines) {
+		
+			try {
+				File file = new File(path+"/"+name);
+				if(!file.exists())
+					file.createNewFile();
+				
+				BufferedWriter bw = new BufferedWriter( new FileWriter( file ) );
+				
+				Iterator<String> it = lines.iterator();
+				while(it.hasNext()) {
+					bw.write(it.next());
+					if(it.hasNext())
+						bw.newLine();
+				}
+				
+				bw.close();
+				
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		
 		
 	}
 	

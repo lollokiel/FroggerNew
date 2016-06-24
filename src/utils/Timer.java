@@ -12,15 +12,15 @@ public class Timer extends Thread {
 	}
 	
 	public int getSeconds() {
-		gameFrame.getPlayground().getLock().lock();
-			int returnSec = seconds;
-		gameFrame.getPlayground().getLock().unlock();	
+		this.gameFrame.getPlayground().getLock().lock();
+			int returnSec = this.seconds;
+		this.gameFrame.getPlayground().getLock().unlock();	
 		return returnSec;	
 	}
 	
 	@Override
 	public void run() {
-		while(gameFrame.getPlayground().getMeeple().isAlive()) {
+		while(this.gameFrame.getPlayground().getMeeple().isAlive()) {
 			
 			try {
 				Thread.sleep(1000);
@@ -28,14 +28,14 @@ public class Timer extends Thread {
 				e.printStackTrace();
 			}
 
-			gameFrame.getPlayground().getLock().lock();
+			this.gameFrame.getPlayground().getLock().lock();
 			
-				seconds++;
+				this.seconds++;
 			
-			if(gameFrame.getPlayground().getMeeple().isAlive())
-				gameFrame.setTimer(seconds);
+			if(this.gameFrame.getPlayground().getMeeple().isAlive())
+				this.gameFrame.setTimer(seconds);
 
-			gameFrame.getPlayground().getLock().unlock();
+			this.gameFrame.getPlayground().getLock().unlock();
 		}
 	}
 	
