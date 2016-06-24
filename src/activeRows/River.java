@@ -15,36 +15,40 @@ public class River extends ActiveRow {
 		this.setRow(row);
 		
 		// Setze schon ein Holzstamm auf den Fluss
-		this.addMovableObject(new MovableObject(settings.TRUNK,120,this));
+		if(this.getWdhSpeed() != 0) {
+			this.addMovableObject(new MovableObject(settings.TRUNK,120,this));
+		}
 		this.start();
 	}
 	
 	@Override
 	public void run() {
 		
-		// Solange die Spielfigur am Leben ist sollen neue Objekte zum Fluss hinzugefügt werden
-		while(this.playground.getMeeple().isAlive()) {
-			
-			this.playground.getLock().lock();
-			
-				MovableObject newTrunk;
-				if(this.getDirection() == 1) {
-					newTrunk = new MovableObject(this.settings.TRUNK, -70 ,this);
-				} else {
-					newTrunk = new MovableObject(this.settings.TRUNK, Settings.PG_WIDTH, this);
+		if(this.getWdhSpeed() != 0) {
+			// Solange die Spielfigur am Leben ist sollen neue Objekte zum Fluss hinzugefügt werden
+			while(this.playground.getMeeple().isAlive()) {
+				
+				this.playground.getLock().lock();
+				
+					MovableObject newTrunk;
+					if(this.getDirection() == 1) {
+						newTrunk = new MovableObject(this.settings.TRUNK, -70 ,this);
+					} else {
+						newTrunk = new MovableObject(this.settings.TRUNK, Settings.PG_WIDTH, this);
+					}
+					this.addMovableObject(newTrunk);
+					
+				this.playground.getLock().unlock();
+				
+				try {
+					
+					int t = 2000 + (int)(Math.random()*1000);
+					t = 4000/getWdhSpeed()+(int)(Math.random()*5000);
+					Thread.sleep(t);
+					
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
-				this.addMovableObject(newTrunk);
-				
-			this.playground.getLock().unlock();
-			
-			try {
-				
-				int t = 2000 + (int)(Math.random()*1000);
-				t = 4000/getWdhSpeed()+(int)(Math.random()*5000);
-				Thread.sleep(t);
-				
-			} catch (InterruptedException e) {
-				e.printStackTrace();
 			}
 		}
 		
