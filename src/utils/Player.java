@@ -11,16 +11,16 @@ public class Player implements Comparable<Player> {
 	}
 	
 	public String getName() {
-		return name;
+		return this.name;
 	}
 	
 	public int getTime() {
-		return time;
+		return this.time;
 	}
 
 	@Override
 	public int compareTo(Player o) {
-		return (time < o.time ) ? -1 : (time > o.time )? 1 : 0;
+		return (this.time < o.time ) ? -1 : (this.time > o.time )? 1 : 0;
 	}
 	
 }

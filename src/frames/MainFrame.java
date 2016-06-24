@@ -2,8 +2,6 @@ package frames;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -33,6 +31,8 @@ import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 import server.Client;
+import server.Level;
+import server.LevelFile;
 import utils.Figure;
 import utils.HighscoreTableModel;
 import utils.Player;
@@ -44,50 +44,31 @@ public class MainFrame extends JFrame{
 	private static final long serialVersionUID = 1L;
 	
 	private Settings 	settings;
-	private MainFrame 	thisFrame;
 	private Game 		gameWindow;
 	private Client		client;
-
-	private JLabel lblLevelSelectHighscore;
-	private JLabel lblLevelSelectStart;
-	private JLabel lblFigurSelectStart;
-	
-	private JPanel panelHighscoreSelect;
-	private JPanel panelHighscore;
-	private JPanel panelStart;
-	private JPanel panelStartLevel;
-	private JPanel panelStartFigur;
-	private JPanel panelServer;
-	
-	private JButton btnSave;
-	private JButton btnLoad;
-	private JButton btnStart;
-	
+	private JLabel 		lblLevelSelectHighscore, lblLevelSelectStart, lblFigurSelectStart;	
+	private JPanel 		panelHighscoreSelect, panelHighscore, panelStart, panelStartLevel, panelStartFigur, panelServer;
+	private JButton 	btnSave, btnLoad, btnStart;
 	private JScrollPane scrollPaneHighscore;
+	private JTable 		highscoreTable;
 
 	private JComboBox<Integer> 	comboLevelSelectStart;
 	private JComboBox<Integer> 	comboLevelSelectHighscore;
 	private JComboBox<Figure> 	comboFigureSelectStart;
 
-	private JTable highscoreTable;
-	
 	private java.lang.reflect.Type playerListType = new TypeToken<ArrayList<Player>>(){}.getType();
 	
-	/*
-	 * Create the application.
-	 */
 	public MainFrame() {
 				
 		// Client für Serververbindung
-		client = new Client();
+		this.client = new Client();
 		
 		// Erstelle eine Settingsklasse 
-		settings = new Settings();
+		this.settings = new Settings();
 
 		// Level lesen
-		ArrayList<Integer> levelList = readLevel();
+		ArrayList<Integer> levelList = this.readLevel();
 		
-		this.thisFrame = this;
 		this.setTitle("Frogger");
 		this.setBounds(100, 100, 270, 500);
 		this.setResizable(false);
@@ -104,102 +85,87 @@ public class MainFrame extends JFrame{
 				FormSpecs.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("default:grow"),
 				FormSpecs.RELATED_GAP_ROWSPEC,}));
-		this.addWindowListener(new WindowAdapter() {
-			
-			@Override
-			public void windowClosing(WindowEvent e) {
-				
-				/*
-				 * Server abgleich
-				 */
-			}
-			
-		});
 		
 		/*
 		 * Haupt Panel
 		 */
 		
-			panelServer = new JPanel(new FormLayout(new ColumnSpec[] {
+			this.panelServer = new JPanel(new FormLayout(new ColumnSpec[] {
 					ColumnSpec.decode("default:grow"),},
 				new RowSpec[] {
 					RowSpec.decode("default:grow"),
 					FormSpecs.RELATED_GAP_ROWSPEC,
 					RowSpec.decode("default:grow"),}));
-			panelServer.setBorder(new TitledBorder(null, "Server", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			this.getContentPane().add(panelServer, "2, 2, fill, fill");
+			this.panelServer.setBorder(new TitledBorder(null, "Server", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			this.getContentPane().add(this.panelServer, "2, 2, fill, fill");
 			
-				btnSave = new JButton("Speichern");
-				panelServer.add(btnSave, "1, 1, default, fill");
-				
-				btnLoad = new JButton("Laden");
-				btnLoad.addActionListener(new ActionListener() {
+				this.btnSave = new JButton("Level updaten");
+				this.btnSave.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						
-						ArrayList<Integer> serverLevelList = client.getLevelList();
-						ArrayList<Integer> localLevelList = readLevel();
-						
-						ArrayList<Integer> missingLevel = new ArrayList<Integer>();
-						for(int id : serverLevelList) {
-							boolean found = false;
-							for(int localId : localLevelList) {
-								if(id == localId) {
-									found = true;
-									break;
-								}
-							}
-							if(!found) missingLevel.add(id);
-						}
-						
-						System.out.println(missingLevel);
+						updateLevel();
 						
 					}
 				});
-				panelServer.add(btnLoad, "1, 3, default, fill");
+				this.panelServer.add(this.btnSave, "1, 1, default, fill");
+				
+				this.btnLoad = new JButton("Neue Level Suchen");
+				this.btnLoad.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						
+						switch(loadNewLevel()) {
+							case 0: 	new Alert("Keine neuen Level gefunden!"); break;
+							case 1: 	new Alert("Es wurden neue Level hinzugefügt!"); break;
+							default: 	new Alert("Es wurde mit Fehlern abgeschlossen!"); break;
+						}
+					
+					}
+				});
+				this.panelServer.add(this.btnLoad, "1, 3, default, fill");
 		
-			panelHighscore = new JPanel(new FormLayout(new ColumnSpec[] {
+			this.panelHighscore = new JPanel(new FormLayout(new ColumnSpec[] {
 					ColumnSpec.decode("default:grow"),},
 				new RowSpec[] {
 					RowSpec.decode("30px:grow"),
 					FormSpecs.RELATED_GAP_ROWSPEC,
 					RowSpec.decode("default:grow"),}));
-			panelHighscore.setBorder(new TitledBorder(null, "Highscore", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			this.getContentPane().add(panelHighscore, "2, 4, fill, fill");
+			this.panelHighscore.setBorder(new TitledBorder(null, "Highscore", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			this.getContentPane().add(this.panelHighscore, "2, 4, fill, fill");
 				
-				panelHighscoreSelect = new JPanel(new FormLayout(new ColumnSpec[] {
+				this.panelHighscoreSelect = new JPanel(new FormLayout(new ColumnSpec[] {
 						ColumnSpec.decode("50px"),
 						FormSpecs.RELATED_GAP_COLSPEC,
 						ColumnSpec.decode("default:grow"),},
 					new RowSpec[] {
 						RowSpec.decode("default:grow"),}));
-				panelHighscore.add(panelHighscoreSelect, "1, 1, fill, fill");
+				this.panelHighscore.add(this.panelHighscoreSelect, "1, 1, fill, fill");
 		
-					lblLevelSelectHighscore = new JLabel("Level:");
-					panelHighscoreSelect.add(lblLevelSelectHighscore, "1, 1, left, default");
+					this.lblLevelSelectHighscore = new JLabel("Level:");
+					this.panelHighscoreSelect.add(this.lblLevelSelectHighscore, "1, 1, left, default");
 			
-					comboLevelSelectHighscore = new JComboBox<Integer>();
+					this.comboLevelSelectHighscore = new JComboBox<Integer>();
 					for(int i : levelList) {
-						comboLevelSelectHighscore.addItem(i);
+						this.comboLevelSelectHighscore.addItem(i);
 					}
-					comboLevelSelectHighscore.addActionListener(new ActionListener() {
+					this.comboLevelSelectHighscore.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 							reloadHighscore();
 						}
 					});
-					panelHighscoreSelect.add(comboLevelSelectHighscore, "3, 1, fill, default");
+					this.panelHighscoreSelect.add(this.comboLevelSelectHighscore, "3, 1, fill, default");
 				
 		
-				scrollPaneHighscore = new JScrollPane();
-				scrollPaneHighscore.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-				scrollPaneHighscore.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-				panelHighscore.add(scrollPaneHighscore, "1, 3, fill, fill");
+				this.scrollPaneHighscore = new JScrollPane();
+				this.scrollPaneHighscore.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+				this.scrollPaneHighscore.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+				this.panelHighscore.add(this.scrollPaneHighscore, "1, 3, fill, fill");
 								
-					highscoreTable = new JTable();
-					reloadHighscore();
-					scrollPaneHighscore.setViewportView(highscoreTable);
+					this.highscoreTable = new JTable();
+					this.reloadHighscore();
+					this.scrollPaneHighscore.setViewportView(this.highscoreTable);
 					
 		
-			panelStart = new JPanel(new FormLayout(new ColumnSpec[] {
+			this.panelStart = new JPanel(new FormLayout(new ColumnSpec[] {
 					ColumnSpec.decode("default:grow"),},
 				new RowSpec[] {
 					RowSpec.decode("30px:grow"),
@@ -207,78 +173,87 @@ public class MainFrame extends JFrame{
 					RowSpec.decode("30px:grow"),
 					FormSpecs.RELATED_GAP_ROWSPEC,
 					RowSpec.decode("default:grow"),}));
-			panelStart.setBorder(new TitledBorder(null, "Starten", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			this.getContentPane().add(panelStart, "2, 6, fill, fill");
+			this.panelStart.setBorder(new TitledBorder(null, "Starten", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			this.getContentPane().add(this.panelStart, "2, 6, fill, fill");
 		
-				panelStartLevel = new JPanel(new FormLayout(new ColumnSpec[] {
+				this.panelStartLevel = new JPanel(new FormLayout(new ColumnSpec[] {
 						ColumnSpec.decode("50px"),
 						FormSpecs.RELATED_GAP_COLSPEC,
 						ColumnSpec.decode("default:grow"),},
 					new RowSpec[] {
 						RowSpec.decode("default:grow"),}));
-				panelStart.add(panelStartLevel, "1, 1, fill, fill");
+				this.panelStart.add(this.panelStartLevel, "1, 1, fill, fill");
 		
 		
-					lblLevelSelectStart = new JLabel("Level:");
-					panelStartLevel.add(lblLevelSelectStart, "1, 1, left, default");
+					this.lblLevelSelectStart = new JLabel("Level:");
+					this.panelStartLevel.add(this.lblLevelSelectStart, "1, 1, left, default");
 				
-					comboLevelSelectStart = new JComboBox<Integer>();
+					this.comboLevelSelectStart = new JComboBox<Integer>();
 					for(int i : levelList) {
-						comboLevelSelectStart.addItem(i);
+						this.comboLevelSelectStart.addItem(i);
 					}
-					panelStartLevel.add(comboLevelSelectStart, "3,1,default,fill");
+					this.panelStartLevel.add(this.comboLevelSelectStart, "3,1,default,fill");
 				
-					panelStartFigur = new JPanel(new FormLayout(new ColumnSpec[] {
+					this.panelStartFigur = new JPanel(new FormLayout(new ColumnSpec[] {
 							ColumnSpec.decode("50px"),
 							FormSpecs.RELATED_GAP_COLSPEC,
 							ColumnSpec.decode("default:grow"),},
 						new RowSpec[] {
 							RowSpec.decode("default:grow"),}));
-					panelStart.add(panelStartFigur, "1, 3, fill, fill");
+					this.panelStart.add(this.panelStartFigur, "1, 3, fill, fill");
 		
-						lblFigurSelectStart = new JLabel("Figur:");
-						panelStartFigur.add(lblFigurSelectStart, "1, 1, left, default");
+						this.lblFigurSelectStart = new JLabel("Figur:");
+						this.panelStartFigur.add(this.lblFigurSelectStart, "1, 1, left, default");
 						
-						comboFigureSelectStart = new JComboBox<Figure>();
+						this.comboFigureSelectStart = new JComboBox<Figure>();
 						for(Figure figure : settings.MEEPLES) 
-							comboFigureSelectStart.addItem(figure);
-						panelStartFigur.add(comboFigureSelectStart, "3, 1, default, fill");
+							this.comboFigureSelectStart.addItem(figure);
+						this.panelStartFigur.add(this.comboFigureSelectStart, "3, 1, default, fill");
 		
-					btnStart = new JButton("Starten");
-					btnStart.addActionListener(new ActionListener() {
+					this.btnStart = new JButton("Starten");
+					this.btnStart.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 							int levelSelected = (int)comboLevelSelectStart.getSelectedItem();
 							Figure figureSelected = (Figure)comboFigureSelectStart.getSelectedItem();
 							
-							thisFrame.start(levelSelected, figureSelected, getBounds().x, getBounds().y);				
+							start(levelSelected, figureSelected, getBounds().x, getBounds().y);				
 						}
 					});
-					panelStart.add(btnStart, "1, 5, default, fill");
+					this.panelStart.add(this.btnStart, "1, 5, default, fill");
 	}	
 	
-	/*
-	 * Baue ein neues Spielfenster
+	/**
+	 * Startet ein neues Spiel
+	 * @param level Levelnummer, welches gestartet werden soll
+	 * @param figure Spielfigur, mit der gespielt wird.
+	 * @param x x-Koordinate, wo das Spielfenster liegen soll
+	 * @param y y-Koordinate, wo das Spielfenster liegen soll
 	 */
 	public void start(int level, Figure figure, int x, int y) {
 		if(Utils.checkLevel(level)) {
-			gameWindow = new Game(level, figure, thisFrame, x, y);
-			gameWindow.setVisible(true);
+			this.gameWindow = new Game(level, figure, this, x, y);
+			this.gameWindow.setVisible(true);
 			this.dispose();
 		} else {
 			this.reloadHighscore();
 			this.setVisible(true);
-			System.out.println("Nicht alle notwendigen Dateien vorhanden!");
+			new Alert("Es ist ein Fehler aufgetreten!");
 		}
 	}
 	
+	/**
+	 * Gibt das Einstellungsobjekt zurück
+	 * @return setting Objekt vom Typ Settings; Enthällt alle Einstellungen
+	 */
 	public Settings getSettings() {
-		return settings;
+		return this.settings;
 	}
 
-	/*
-	 * Gibt Liste aller Levelnummern zurück
+	/**
+	 * Selektiert alle Levelnummern, die lokal vorhanden sind und gibt sie in einem Array zurück 
+	 * @return Liste aller Levelnummer, die lokal verfügbar sind.
 	 */
-	private ArrayList<Integer> readLevel() {
+	public ArrayList<Integer> readLevel() {
 		
 		try {
 			ArrayList<Integer> levelList = new ArrayList<Integer>();
@@ -300,18 +275,19 @@ public class MainFrame extends JFrame{
 		return new ArrayList<Integer>();
 	}
 
-	/*
-	 * Gibt die Bestzeit in Sekunden eines Levels zurück
+	/**
+	 * Gibt die Bestzeit in Sekunden von einem gefragten Level zurück
+	 * @param level Levelnummer, dessen Bestzeit zurückgegeben werden soll
+	 * @return Bestzeit des gerfragten Levels
 	 */
 	public int readBest(int level) {
 		
 		try {
+			
 			File file = new File("res/level/highscores/"+level+".json");
 			if(file.exists()) {
 				
-				
-				Gson gson = new Gson();
-				ArrayList<Player> player = gson.fromJson( new FileReader(file) , playerListType);
+				ArrayList<Player> player = new Gson().fromJson( new FileReader(file) , this.playerListType);
 				if(player != null) {
 					player.sort(null);
 					
@@ -329,8 +305,11 @@ public class MainFrame extends JFrame{
 
 	}
 	
-	/*
-	 * Fügt einen neuen Eintrag in die Highscoreliste
+	/**
+	 * Fügt dem Highscore einen neuen Eintrag hinzu
+	 * @param level Nummer des Levels, zu dessen Highscore der Eintrag hinzugefügt werden soll
+	 * @param name Name des Spielers
+	 * @param time Zeit, die der Spieler gebraucht hat
 	 */
 	public boolean addPlayerToHighscore(int level, String name, int time) {
 		
@@ -341,7 +320,7 @@ public class MainFrame extends JFrame{
 			ArrayList<Player> allPlayer = new ArrayList<Player>();
 			
 			if(file.exists()) {
-				allPlayer = gson.fromJson(new FileReader( file ), playerListType);
+				allPlayer = gson.fromJson(new FileReader( file ), this.playerListType);
 			} else {
 				file.createNewFile();
 			}
@@ -356,32 +335,131 @@ public class MainFrame extends JFrame{
 			bw.close();
 			
 		} catch (IOException | JsonIOException | JsonSyntaxException e) {
-			e.printStackTrace();	
+			return false;
 		}
 		
-		return false;
+		return true;
 	}
 	
-	/*
-	 * Aktuallisiert die Highscoreliste
+	/**
+	 * Baut das Highscore-Feld neu auf. Benutzt die Levelnummer, die im Dropdown gewählt ist.
 	 */
 	public void reloadHighscore() {
-		int level = (int)comboLevelSelectHighscore.getSelectedItem();
-		try {
-			
-			ArrayList<Player> playerHighscore = null;
-			File f = new File("res/level/highscores/"+level+".json");
-			if( f.exists()  ) {
-				Gson gson = new Gson();					
+		if(this.comboLevelSelectHighscore.getItemCount() > 0) {
+			int level = (int)this.comboLevelSelectHighscore.getSelectedItem();
+			try {
 				
-				playerHighscore = gson.fromJson(new FileReader( new File( "res/level/highscores/"+level+".json" )), playerListType);
+				ArrayList<Player> playerHighscore = null;
+				File f = new File("res/level/highscores/"+level+".json");
+				if( f.exists() ) { 					
+					playerHighscore = new Gson().fromJson(new FileReader( new File( "res/level/highscores/"+level+".json" )), playerListType);
+				}
+				this.highscoreTable.setModel(new HighscoreTableModel(playerHighscore));	
+				
+			} catch (JsonIOException | JsonSyntaxException | FileNotFoundException e1) {
+				e1.printStackTrace();
 			}
-			highscoreTable.setModel(new HighscoreTableModel(playerHighscore));	
-			
-		} catch (JsonIOException | JsonSyntaxException | FileNotFoundException e1) {
-			e1.printStackTrace();
 		}
 		
+	}
+	
+	/**
+	 * Ersetzt alle lokalen Leveldateien mit denen auf dem Server
+	 */
+	private void updateLevel() {
+		try {
+			this.loadNewLevel();
+			ArrayList<Level> allLevel = this.client.getAllLevel();
+			
+			for(Level level : allLevel) {
+				
+				for(LevelFile file : level.getFiles()) {
+					
+					BufferedWriter bw = new BufferedWriter( new FileWriter (new File( "res/level/"+file.getName() )));
+					for(int i = 0; i < file.getLines().size(); i++) {
+						bw.write(file.getLines().get(i));
+						if(i < file.getLines().size()-1) bw.newLine();
+					}
+					bw.close();
+					
+				}
+				
+				
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Gleicht lokalen Stand mit Server ab und lädt neue, bzw. fehlende Level. Ersetzt nicht existierende level
+	 * @return 0 für keine neuen Level
+	 * 1 für neue Level ohne Fehler
+	 * 2 für neue Level mit Fehlern
+	 */
+	private int loadNewLevel() {
+		ArrayList<Integer> serverLevelList = this.client.getLevelList();
+		ArrayList<Integer> localLevelList = this.readLevel();
+		
+		ArrayList<Integer> missingLevel = new ArrayList<Integer>();
+		for(int id : serverLevelList) {
+			boolean found = false;
+			for(int localId : localLevelList) {
+				if(id == localId) {
+					found = true;
+					break;
+				}
+			}
+			if(!found) missingLevel.add(id);
+		}
+		
+		int fileMissing = 0;
+		for(int levelId : missingLevel) {
+			Level level = client.getLevel(levelId);
+			if(level.hasFile("backgroundStructure/"+levelId+".txt") && level.hasFile("objectStructure/"+levelId+".txt")) {
+				localLevelList.add(levelId);
+				for(LevelFile file : level.getFiles()) {
+					Utils.createFile(file.getName(), "res/level", file.getLines());
+				}
+				
+				try {
+					BufferedWriter bw = new BufferedWriter( new FileWriter( new File("res/level/level.txt")));
+					for(int i = 0; i < localLevelList.size(); i++) {
+						bw.write(localLevelList.get(i)+"");
+						if(i < localLevelList.size()-1) bw.newLine();
+					}
+					bw.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			} else {
+				fileMissing++;
+			}
+		}
+
+		localLevelList.sort(null);
+		
+		if(missingLevel.size() > 0) {
+			
+			this.comboLevelSelectHighscore.removeAllItems();
+			this.comboLevelSelectStart.removeAllItems();
+
+			for(int i : localLevelList) {
+				this.comboLevelSelectHighscore.addItem(i);
+				this.comboLevelSelectStart.addItem(i);
+			}
+			
+			this.comboLevelSelectHighscore.setSelectedIndex(0);
+			this.comboLevelSelectStart.setSelectedIndex(0);
+			
+			if(fileMissing > 0) {
+				return 2;
+			} else {
+				return 1;
+			}
+		}
+		
+		return 0;
 	}
 
 

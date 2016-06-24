@@ -17,37 +17,39 @@ public class MoveObjects implements Runnable {
 	@Override
 	public void run() {
 		while(playground.getMeeple().isAlive()) {
-			
-			playground.getLock().lock();
-				for(ActiveRow row : playground.getRows()) {
+		
+			this.playground.getLock().lock();
+				for(ActiveRow row : this.playground.getRows()) {
 					for(MovableObject obj : row.getMoveableObjects()) {
 						if(obj.getMeeple() != null) {
 							obj.getMeeple().raiseX(row.getSpeed()*row.getDirection());
-							if(obj.getMeeple().getX() < 0 || obj.getMeeple().getX()+Settings.FIELDSIZE > Settings.PLAYGROUND_WIDTH) {
-								playground.die();
+							if(obj.getMeeple().getX() < 0 || obj.getMeeple().getX()+Settings.FIELDSIZE > Settings.PG_WIDTH) {
+								this.playground.die();
 							}
 						}
 						obj.raiseX(row.getSpeed()*row.getDirection());
 					}
 				}
-			playground.getLock().unlock();
+				
+			this.playground.getLock().unlock();
 			
-			playground.repaint();
+			this.playground.repaint();
 
-			playground.getLock().lock();
+			this.playground.getLock().lock();
 			
-			// Auf Kollision prüfen
-				for(ActiveRow row : playground.getRows()) {
-					if(row.getClass() == Street.class && row.getRow() == playground.getMeeple().getY()/Settings.FIELDSIZE) {
+				// Auf Kollision prüfen
+				for(ActiveRow row : this.playground.getRows()) {
+					if(row.getClass() == Street.class && row.getRow() == this.playground.getMeeple().getY()/Settings.FIELDSIZE) {
 						for(MovableObject obj : row.getMoveableObjects()) {
-							if(!(playground.getMeeple().getX() > obj.getX()+obj.getWidth() || playground.getMeeple().getX() + Settings.FIELDSIZE < obj.getX() )) {
-								playground.die();
+							if(!(this.playground.getMeeple().getX() > obj.getX()+obj.getWidth() || this.playground.getMeeple().getX() + Settings.FIELDSIZE < obj.getX() )) {
+								this.playground.die();
 								break;
 							}
 						}
 					}
 				}
-			playground.getLock().unlock();
+			
+				this.playground.getLock().unlock();
 			
 			try {
 				Thread.sleep(25);

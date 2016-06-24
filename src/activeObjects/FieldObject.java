@@ -6,9 +6,9 @@ import utils.FieldKoordinate;
 
 public abstract class FieldObject {
 	
-	protected FieldKoordinate koordinate;
-	protected BufferedImage backgorund;
-	protected boolean entranceable = true;
+	protected FieldKoordinate 	koordinate;
+	protected BufferedImage 	backgorund;
+	protected boolean 			entranceable = true;
 	
 	public BufferedImage getBackground() {
 		return this.backgorund;

@@ -56,19 +56,24 @@ public abstract class ActiveRow extends Thread {
 		this.wdhSpeed = wdhSpeed;
 	}
 	
-	/*
-	 * Other
+	/**
+	 * Fügt ein bewegendes Objekt zu der Liste der bewegenden Objekte hinzu.
+	 * @param object Bewegendes Objekt, welches hinzugefügt werden soll
 	 */
 	public void addMovableObject(MovableObject object) {
 		this.movableObjects.add(object);
 	}
 	
+	/**
+	 * Löscht ein bewegendes Objekt aus der Liste der bewegenden Objekte.
+	 * @param object Das zu löschende bewegende Objekt
+	 */
 	public void removeMovableObject(MovableObject object) {
 		this.movableObjects.remove(object);
 	}
 	
 	public ArrayList<MovableObject> getMoveableObjects() {
-		return movableObjects;
+		return this.movableObjects;
 	}
 	
 }
