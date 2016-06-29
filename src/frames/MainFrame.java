@@ -386,10 +386,10 @@ public class MainFrame extends JFrame{
 					
 				}
 				allOkay = true;
-				new Alert("Update war erfolgreich!");
 				
 			}
 			if(!allOkay) new Alert("Das updaten war nicht erfolgreich!");
+			else new Alert("Update war erfolgreich!");
 			
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -42,8 +42,19 @@ public class River extends ActiveRow {
 				
 				try {
 					
-					int t = 2000 + (int)(Math.random()*1000);
-					t = 4000/getWdhSpeed()+(int)(Math.random()*5000);
+					int frequenzZeit = (int) (newTrunk.getWidth()/(this.getSpeed()*40.0)*1000); // Dauer für Strecke des eigenen Autos
+					int t = frequenzZeit; // Dauer in ms, bis Fahrzeug vollkommen im Spielfeld ist, sodass keine Überschneidung entsteht 
+				
+					int minDifference = (this.getWdhSpeed()*2)-1; // Mindestens 1 Autolänge Abstand
+					int maxDifference =  minDifference+2; // Maximal Min +2
+					
+					int minT = t*minDifference;
+					int maxT = t*maxDifference;
+					int diffT = maxT-minT;
+					int randT = (int)(Math.random()*diffT);				
+
+					t += minT + randT;
+					
 					Thread.sleep(t);
 					
 				} catch (InterruptedException e) {

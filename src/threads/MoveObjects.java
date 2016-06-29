@@ -27,7 +27,7 @@ public class MoveObjects implements Runnable {
 								this.playground.die();
 							}
 						}
-						obj.raiseX(row.getSpeed()*row.getDirection());
+						obj.raiseX(((row.getSpeed())*row.getDirection()));
 					}
 				}
 				
