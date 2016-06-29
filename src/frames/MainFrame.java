@@ -367,6 +367,8 @@ public class MainFrame extends JFrame{
 	 * Ersetzt alle lokalen Leveldateien mit denen auf dem Server
 	 */
 	private void updateLevel() {
+		
+		boolean allOkay = false;
 		try {
 			this.loadNewLevel();
 			ArrayList<Level> allLevel = this.client.getAllLevel();
@@ -383,9 +385,12 @@ public class MainFrame extends JFrame{
 					bw.close();
 					
 				}
-				
+				allOkay = true;
+				new Alert("Update war erfolgreich!");
 				
 			}
+			if(!allOkay) new Alert("Das updaten war nicht erfolgreich!");
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
