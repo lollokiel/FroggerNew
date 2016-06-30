@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 
 public class Utils {
 
@@ -112,6 +113,10 @@ public class Utils {
 			}
 		
 		
+	}
+	
+	public static void alert(String message) {
+		JOptionPane.showMessageDialog(null, message, "Achtung!", JOptionPane.PLAIN_MESSAGE);
 	}
 	
 	

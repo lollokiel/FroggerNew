@@ -4,6 +4,10 @@ import java.awt.image.BufferedImage;
 
 import utils.FieldKoordinate;
 
+/**
+ * Abstrakte Klasse für statische Objekte auf dem Spielfeld
+ * Enthält Koordinate, Hintergrundbild und ob es betretbar ist.
+ */
 public abstract class FieldObject {
 	
 	protected FieldKoordinate 	koordinate;
