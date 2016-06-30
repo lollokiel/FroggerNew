@@ -1,10 +1,16 @@
 package activeRows;
 
-
 import activeObjects.MovableObject;
 import frames.Playground;
 import utils.Settings;
 
+/**
+ * Erweitert ActiveRow
+ * Eine der beiden "aktiven Reihen". Bewegende Objekte sind Autos.
+ * Fügt unregelmäßig - abhängig von der Wiederholungsrate - neue Autos hinzu.
+ * Einstellungen, die in der abstrakten Klasse deklariert wurden, werden gefüllt 
+ *
+ */
 public class Street extends ActiveRow {
 	
 	public Street(int direction, int speed, int row, int wdhSpeed, Playground playground) {
@@ -30,7 +36,7 @@ public class Street extends ActiveRow {
 		this.addMovableObject(newCar1);
 		this.addMovableObject(newCar2);
 		
-		// Starte den Thread
+		// Starte das Hinzufügen von neuen Autos
 		this.start();
 	}
 
@@ -42,6 +48,7 @@ public class Street extends ActiveRow {
 			
 			this.playground.getLock().lock();
 			
+				// Erstelle ein neues Objekt, das sich bewegt. Wähle dafür ein zufälliges Hintergrundbild aller Autos.
 				MovableObject newCar = null;
 				if(this.getDirection() == 1) {
 					newCar = new MovableObject(this.settings.CARS_R.get((int)(Math.random()*this.settings.CARS_R.size())),-70,this);
@@ -54,8 +61,9 @@ public class Street extends ActiveRow {
 			
 			try {
 				
+				// Thread unterbrechen und nach zufällig berechneter Zeit t wieder ausführen
 				int frequenzZeit = (int) (newCar.getWidth()/(this.getSpeed()*40.0)*1000); // Dauer für Strecke des eigenen Autos
-				int t = frequenzZeit; // Dauer in ms, bis Fahrzeug vollkommen im Spielfeld ist, sodass keine Überschneidung entsteht 
+				int t = frequenzZeit;  // Mindestzeit zum Neuhinzufügen = frequenzZeit, um Überschneidungen zu verhindern 
 			
 				int minDifference = (this.getWdhSpeed()*2)-1; // Mindestens 1 Autolänge Abstand
 				int maxDifference =  minDifference+2; // Maximal Min +2

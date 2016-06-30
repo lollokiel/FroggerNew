@@ -4,7 +4,14 @@ import java.awt.image.BufferedImage;
 
 import frames.Playground;
 import utils.FieldKoordinate;
+import utils.Settings;
 
+/**
+ * Wasserrose.
+ * Erbt von FieldObject und implementiert Runnable.
+ * Verschwindet nach Eintreten nach 3 sek., ggf. fällt man dann ins Wasser, 
+ * was das Spiel beendet. Steigert die Schwierigkeit im Lauf der Level.
+ */
 public class Waterlily extends FieldObject implements Runnable {
 
 	private Playground playground;
@@ -16,8 +23,9 @@ public class Waterlily extends FieldObject implements Runnable {
 	}
 
 	/*
-	 * Bei Eintritt auf Wasserrose wird Timer gestartet, nach 3 Sekunden verschwindet Sie und 
-	 * Spieler stirbt
+	 * Bei Eintritt auf Wasserrose wird Timer gestartet, nach 3 Sekunden verschwindet Sie und Spieler stirbt
+	 * Im Takt von 300 ms, da sonst ggf. Probleme auftreten, wenn Spieler kurz Rose verlässt und sofort wieder betritt,
+	 * ggf. wird dabei der Thread nicht gelöscht, sondern läuft weiter. Der Timer wird also ggf. nicht auf 3 Sek. gesetzt.
 	 */
 	@Override
 	public void run() {
@@ -36,7 +44,8 @@ public class Waterlily extends FieldObject implements Runnable {
 			if(ms >= 3000) {
 				if(this.playground.getMeeple().getFieldkoordinate().isSame(this.getFieldKoordinate())) {
 					this.playground.removeWaterlily(this);
-					this.playground.die();
+					this.playground.playSound(Settings.waterSound);
+					this.playground.die(1500);
 					this.playground.repaint();
 				}
 			}

@@ -21,6 +21,19 @@ import utils.Settings;
 import utils.Timer;
 import utils.Utils;
 
+/**
+ * Spielfenster
+ * Diese Klasse umfasst das Spielfenster. Es beinhaltet das Spielfeld, den Timer,
+ * die Bestzeit, den Abbruch-Button sowie die Anzeige des Levels. Es ist die Grundlage
+ * für das gerade gespielte Level und definiert:
+ * - Levelnummer
+ * - Verweis auf das Hauptfenster
+ * - Spielfeld
+ * - Figur, mit der gespielt wird
+ * - Timer
+ * - Aufgeben Button 
+ * - einige Label
+ */
 public class Game extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -29,10 +42,10 @@ public class Game extends JFrame {
 	private MainFrame 	mainframe;
 	private Playground 	playground;
 	private Figure 		figure;
-	private Timer timer = new Timer(this);
-	private JPanel panelClock, panelSettingsBar;
-	private JButton btnGiveup;
-	private JLabel lblTimer, lblLevel, lblBesttime, lblBestzeit, lblZeit;
+	private Timer 		timer;
+	private JPanel 		panelClock, panelSettingsBar;
+	private JButton 	btnGiveup;
+	private JLabel 		lblTimer, lblLevel, lblBesttime, lblBestzeit, lblZeit;
 	
 	
 	public Game(int levelNum, Figure figure, MainFrame frameFrogger, int posX, int posY) {
@@ -40,8 +53,9 @@ public class Game extends JFrame {
 		this.level = levelNum;
 		this.mainframe = frameFrogger;
 		this.figure = figure;
-
-		this.setFocusable(false);
+		this.timer = new Timer(this);
+		
+		this.setFocusable(false); // Focus muss auf Spielfeld gelegt werden, KeyEvents
 		this.setResizable(false);
 		this.setTitle("Frogger");
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -53,6 +67,8 @@ public class Game extends JFrame {
 				FormSpecs.RELATED_GAP_ROWSPEC,
 				RowSpec.decode(Settings.ROWS*Settings.FIELDSIZE+"px"),}));
 		this.addWindowListener(new WindowAdapter() {
+			
+			// Wird bei Betätigen des Schließenfeldes ausgelöst 
 			@Override
 			public void windowClosing(WindowEvent e) {
 				closeWindow();
@@ -89,6 +105,7 @@ public class Game extends JFrame {
 		
 					this.lblBesttime = new JLabel();
 					int best = this.mainframe.readBest(levelNum);
+						// Bestzeit anzeigen, wenn keine Bestzeit bekannt: -:--
 						if(best > 0) 	this.lblBesttime.setText(Utils.getTime(best));
 						else 			this.lblBesttime.setText("-:--");
 						this.panelClock.add(this.lblBesttime, "4, 3, fill, default");

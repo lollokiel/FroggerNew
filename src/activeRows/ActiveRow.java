@@ -6,6 +6,16 @@ import activeObjects.MovableObject;
 import frames.Playground;
 import utils.Settings;
 
+/**
+ * Erweitert Thread
+ * Abstrakte Klasse für Straße und Fluss, bildet Grundgerüst für bewegende Objekte
+ * Beinhaltet
+ * - Geschwindigkeit der Objekte
+ * - Richtung der Objekte
+ * - Lage der Reihe
+ * - Rate, wie oft Objekte hinzugefügt werden sollen
+ * - Liste mit sich bewegenden Objekten
+ */
 public abstract class ActiveRow extends Thread {
 	
 
@@ -16,6 +26,7 @@ public abstract class ActiveRow extends Thread {
 	private int direction;
 	private int row;
 	private int wdhSpeed;
+	
 	private ArrayList<MovableObject> movableObjects = new ArrayList<MovableObject>();
 	
 	/*

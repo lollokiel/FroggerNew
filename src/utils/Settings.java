@@ -16,6 +16,14 @@ public class Settings {
 	public static int PG_HEIGHT = FIELDSIZE * ROWS;
 	
 	/*
+	 * Sound Settings
+	 */
+	public static String winSound = "sounds/win.wav";
+	public static String dieSound = "sounds/die.wav";
+	public static String waterSound = "sounds/water.wav";
+	public static String streetSound = "sounds/carbreak.wav";
+	
+	/*
 	 * Movable Objects
 	 */
 	public BufferedImage CAR_L;

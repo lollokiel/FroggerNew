@@ -1,13 +1,10 @@
-package game;
+package utils;
 
 import java.awt.image.BufferedImage;
 
 import activeObjects.FieldObject;
 import activeObjects.MovableObject;
 import frames.Playground;
-import utils.FieldKoordinate;
-import utils.Koordinate;
-import utils.Settings;
 
 public class Meeple {
 

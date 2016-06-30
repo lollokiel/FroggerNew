@@ -24,7 +24,7 @@ public class MoveObjects implements Runnable {
 						if(obj.getMeeple() != null) {
 							obj.getMeeple().raiseX(row.getSpeed()*row.getDirection());
 							if(obj.getMeeple().getX() < 0 || obj.getMeeple().getX()+Settings.FIELDSIZE > Settings.PG_WIDTH) {
-								this.playground.die();
+								this.playground.die(0);
 							}
 						}
 						obj.raiseX(((row.getSpeed())*row.getDirection()));
@@ -42,7 +42,8 @@ public class MoveObjects implements Runnable {
 					if(row.getClass() == Street.class && row.getRow() == this.playground.getMeeple().getY()/Settings.FIELDSIZE) {
 						for(MovableObject obj : row.getMoveableObjects()) {
 							if(!(this.playground.getMeeple().getX() > obj.getX()+obj.getWidth() || this.playground.getMeeple().getX() + Settings.FIELDSIZE < obj.getX() )) {
-								this.playground.die();
+								this.playground.playSound(Settings.streetSound);
+								this.playground.die(2500);
 								break;
 							}
 						}

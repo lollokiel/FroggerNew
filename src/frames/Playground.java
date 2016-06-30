@@ -9,10 +9,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -27,10 +31,11 @@ import activeObjects.Waterlily;
 import activeRows.ActiveRow;
 import activeRows.River;
 import activeRows.Street;
-import game.Meeple;
 import threads.MoveObjects;
 import utils.Countdown;
 import utils.FieldKoordinate;
+import utils.Koordinate;
+import utils.Meeple;
 import utils.Settings;
 import utils.Utils;
 
@@ -172,110 +177,135 @@ public class Playground extends JPanel {
 	 * Tastendruck
 	 */	
 	private void move(KeyEvent e) {
-		// Abfrage, ob gedrückte Taste eine Pfeiltaste ist
-		// 37 - Links; 38 - Oben; 39 - Rechts; 40 - Links
-		if(e.getKeyCode() >=37 && e.getKeyCode() <= 40) { 
-			
-			// Wenn Startcountdown abgelaufen ist
-			if(countdown.seconds<=0) {
-				if(!meepleMoved) {
-					// Starte Stoppuhr
-					new Thread(gameFrame.getTimer()).start();
-					meepleMoved = true;
-				}
-								
-				lock.lock();
-				
-					// Definiere neue Reihe
-					int newRow = meeple.getRow();
-					if(e.getKeyCode() == 38 && meeple.getRow() > 0) {
-						newRow--;
-					} else
-					if(e.getKeyCode() == 40 && meeple.getRow() < Settings.ROWS-1) {
-						newRow++;
-					}
-					
-					River riverTo = null;
-					for(River river : getRiver()) {
-						if(river.getRow() == newRow) {
-							riverTo = river;
-							break;
-						}
-					}
-					
-					// Spielfigur geht auf Fluss
-					if(riverTo != null) { 
-						
-						if(e.getKeyCode() == 37 || e.getKeyCode() == 39) {
-														
-							int newX = meeple.getX();
-							if(e.getKeyCode() == 37) {
-								newX -= Settings.FIELDSIZE;
-							} else {
-								newX += Settings.FIELDSIZE;
-							}
-							
-							if(newX - meeple.getMoveableObject().getX() < 0 || (newX + Settings.FIELDSIZE) - (meeple.getMoveableObject().getX()+meeple.getMoveableObject().getWidth()) > 0) {
-								die();
-							}
-							meeple.moveTo(newX, meeple.getY());
-						} else {
 	
+		if(this.meeple.isAlive()) {
+			
+			// Abfrage, ob gedrückte Taste eine Pfeiltaste ist
+			// 37 - Links; 38 - Oben; 39 - Rechts; 40 - Links
+			if(e.getKeyCode() >=37 && e.getKeyCode() <= 40) { 
+				
+				// Wenn Startcountdown abgelaufen ist
+				if(countdown.seconds<=0) {
+					if(!meepleMoved) {
+						// Starte Stoppuhr
+						new Thread(gameFrame.getTimer()).start();
+						meepleMoved = true;
+					}
+									
+					lock.lock();
+					
+						// Definiere neue Reihe
+						int newRow = meeple.getRow();
+						if(e.getKeyCode() == 38 && meeple.getRow() > 0) {
+							newRow--;
+						} else
+						if(e.getKeyCode() == 40 && meeple.getRow() < Settings.ROWS-1) {
+							newRow++;
+						}
+						
+						River riverTo = null;
+						for(River river : getRiver()) {
+							if(river.getRow() == newRow) {
+								riverTo = river;
+								break;
+							}
+						}
+						
+						// Spielfigur geht auf Fluss
+						if(riverTo != null) { 
+							
+							if(e.getKeyCode() == 37 || e.getKeyCode() == 39) {
+															
+								int newX = meeple.getX();
+								if(e.getKeyCode() == 37) {
+									newX -= Settings.FIELDSIZE;
+								} else {
+									newX += Settings.FIELDSIZE;
+								}
+								
+								if(meeple.getMoveableObject() != null) {
+									if(newX - meeple.getMoveableObject().getX() < 0 || (newX + Settings.FIELDSIZE) - (meeple.getMoveableObject().getX()+meeple.getMoveableObject().getWidth()) > 0) {
+										this.playSound(Settings.waterSound);
+										die(1500);
+									}
+								} else {
+									this.playSound(Settings.waterSound);
+									die(1500);
+								}
+								meeple.moveTo(newX, meeple.getY());
+							} else {
+								
+								if(meeple.getMoveableObject() != null) {
+									meeple.getMoveableObject().setMeepleOn(null);
+									meeple.setMoveableObject(null);
+								}
+								
+								for(MovableObject obj : riverTo.getMoveableObjects()) {
+									if(obj.getX() < meeple.getMiddleX() && obj.getX() + obj.getWidth() > meeple.getMiddleX()) {
+										meeple.setMoveableObject(obj);
+										break;
+									}
+								}
+								
+								int newX = 0;
+								if(meeple.getMoveableObject() == null) {
+									Waterlily goToLily = null;
+									FieldKoordinate fkGoTo = new FieldKoordinate(new Koordinate(meeple.getMiddleX(), newRow*Settings.FIELDSIZE));
+									for(FieldObject obj : getObjectStructure()) {
+										if(obj.getClass() == Waterlily.class) {
+											
+											if(obj.getFieldKoordinate().isSame(fkGoTo)) {
+												goToLily = (Waterlily)obj;
+												break;
+											}
+										}
+									}
+									if(goToLily != null) {
+										newX = fkGoTo.getCol()*Settings.FIELDSIZE;
+										new Thread(goToLily).start();
+									} else {
+										newX = (int)(this.meeple.getMiddleX()/Settings.FIELDSIZE) *Settings.FIELDSIZE;
+										this.playSound(Settings.waterSound);
+										die(1500);
+									}
+								} else {
+									newX = meeple.getMoveableObject().getX()+(Settings.FIELDSIZE)*
+											((int)((meeple.getMiddleX()-meeple.getMoveableObject().getX()) / Settings.FIELDSIZE));																
+								}
+								meeple.moveTo(newX, newRow*Settings.FIELDSIZE);	
+								
+							}
+						} else {	// Spielfigur geht auf anderem Feld
+							
+							meeple.moveField(e.getKeyCode());
+							
 							if(meeple.getMoveableObject() != null) {
 								meeple.getMoveableObject().setMeepleOn(null);
 								meeple.setMoveableObject(null);
 							}
-							
-							for(MovableObject obj : riverTo.getMoveableObjects()) {
-								if(obj.getX() < meeple.getMiddleX() && obj.getX() + obj.getWidth() > meeple.getMiddleX()) {
-									meeple.setMoveableObject(obj);
-									break;
+						}		
+						
+						//Check ob auf Loch oder Wasserrose
+						for(FieldObject obj : getObjectStructure()) {
+							if(obj.getClass() == Pit.class) {
+								if(obj.getFieldKoordinate().isSame(meeple.getFieldkoordinate())) {
+									die(0);
 								}
 							}
-							
-							int newX = 0;
-							if(meeple.getMoveableObject() == null) {
-								newX = meeple.getX();
-								die();
-							} else {
-								newX = meeple.getMoveableObject().getX()+(Settings.FIELDSIZE)*
-										((int)((meeple.getMiddleX()-meeple.getMoveableObject().getX()) / Settings.FIELDSIZE));																
-							}
-							meeple.moveTo(newX, newRow*Settings.FIELDSIZE);	
-							
-						}
-					} else {	// Spielfigur geht auf anderem Feld
+						}						
 						
-						meeple.moveField(e.getKeyCode());
-						
-						if(meeple.getMoveableObject() != null) {
-							meeple.getMoveableObject().setMeepleOn(null);
-							meeple.setMoveableObject(null);
+						if(meeple.getY() == 0) {
+							win();
 						}
-					}		
 					
-					//Check ob auf Loch oder Wasserrose
-					for(FieldObject obj : getObjectStructure()) {
-						if(obj.getFieldKoordinate().isSame(meeple.getFieldkoordinate())) {
-							if(obj.getClass() == Pit.class) {
-								die();
-							} else if(obj.getClass() == Waterlily.class) {
-								Waterlily waterlily = (Waterlily)obj;
-								new Thread(waterlily).start();
-							}
-						} 
-					}
+					lock.unlock();
+					this.repaint();
 					
-					
-					if(meeple.getY() == 0) {
-						win();
-					}
-				
-				lock.unlock();
-				this.repaint();
-				
-			}
+				}
+			
+			} 
 		}
+		
 	}
 	
 	/*
@@ -284,6 +314,7 @@ public class Playground extends JPanel {
 	public void win() {
 		this.win = true;
 		this.meeple.setAlive(false);
+		this.playSound(Settings.winSound);
 				
 		JLabel wonNameLabel = new JLabel("Dein Name:");
 		wonNameLabel.setHorizontalAlignment(SwingConstants.LEFT);
@@ -364,10 +395,24 @@ public class Playground extends JPanel {
 	 * - Unbeweglichkeit der Spielfigur
 	 * - Ende des Timers
 	 * - Keine neuen Elemente werden hinzugefügt
+	 * - Abspielen des Verliertons nach n ms, abhängig, ob noch ein anderer Ton gespielt werden soll
 	 */
-	public void die() {
+	public void die(int msToPlaySound) {
 		this.meeple.setAlive(false);
-			
+		
+		new Thread( new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(msToPlaySound);
+					playSound(Settings.dieSound);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}).start();
+		
 		int btnWidth = 200;
 		JButton btnRestart = new JButton("Neu Starten");
 		btnRestart.addActionListener(new ActionListener() {
@@ -533,6 +578,18 @@ public class Playground extends JPanel {
 		private Graphics2D paintMeeple(Graphics2D g2) {
 			g2.drawImage(this.meeple.getImage(), this.meeple.getX(), this.meeple.getY(), Settings.FIELDSIZE, Settings.FIELDSIZE, null);
 			return g2;
+		}
+		
+		public void playSound(String sound) {
+			try {
+				Clip wav = AudioSystem.getClip();
+				AudioInputStream inputStreamWAV = AudioSystem
+						.getAudioInputStream(new File("res/"+sound).getAbsoluteFile());
+				wav.open(inputStreamWAV);
+				wav.start();
+			} catch (Exception e) {
+				System.err.println(e.getMessage());
+			}
 		}
 	
 	/*

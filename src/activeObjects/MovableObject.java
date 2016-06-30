@@ -3,14 +3,21 @@ package activeObjects;
 import java.awt.image.BufferedImage;
 
 import activeRows.ActiveRow;
-import game.Meeple;
+import utils.Meeple;
 
+/**
+ * Umfasst alle sich bewegenden Objekte, die in einem Intervall t durch die Klasse
+ * MoveObjects verschoben werden sollen
+ * Beinhaltet x-Koordinate (y-Koordinate durch ActiveRow definiert), das Hintergrundbild,
+ * die Reihe auf dem es fährt und ein Verweis auf die Spielfigur, wenn diese mit diesem
+ * Objekt fahren soll. 
+ */
 public class MovableObject {
 	
 	protected int 			x;
 	protected BufferedImage background;
 	protected ActiveRow 	row;
-	private Meeple 			meepleOn;
+	protected Meeple		meepleOn;
 	
 	public MovableObject(BufferedImage image, int x, ActiveRow row) {
 		this.background = image;
