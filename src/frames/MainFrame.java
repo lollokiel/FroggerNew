@@ -39,6 +39,16 @@ import utils.Player;
 import utils.Settings;
 import utils.Utils;
 
+/**
+ * Kernfenster des Programms.
+ * Umfasst alle Einstellungen, die während des Programmverlaufs vorgenommen werden können:
+ * - Spielfigur
+ * - Level
+ * - Neue Level suchen & hinzufügen
+ * - Level mit Server abgleichen
+ * 
+ * Stellt des Weiteren den Highscore für das gewählte Level dar.
+ */
 public class MainFrame extends JFrame{
 
 	private static final long serialVersionUID = 1L;
@@ -47,7 +57,8 @@ public class MainFrame extends JFrame{
 	private Game 		gameWindow;
 	private Client		client;
 	private JLabel 		lblLevelSelectHighscore, lblLevelSelectStart, lblFigurSelectStart;	
-	private JPanel 		panelHighscoreSelect, panelHighscore, panelStart, panelStartLevel, panelStartFigur, panelServer;
+	private JPanel 		panelHighscoreSelect, panelHighscore, panelStart, 
+						panelStartLevel, panelStartFigur, panelServer;
 	private JButton 	btnSave, btnLoad, btnStart;
 	private JScrollPane scrollPaneHighscore;
 	private JTable 		highscoreTable;
@@ -68,7 +79,7 @@ public class MainFrame extends JFrame{
 
 		// Level lesen
 		ArrayList<Integer> levelList = this.readLevel();
-		
+		this.setIconImage(this.settings.FROG);
 		this.setTitle("Frogger");
 		this.setBounds(100, 100, 270, 500);
 		this.setResizable(false);
@@ -112,11 +123,10 @@ public class MainFrame extends JFrame{
 				this.btnLoad = new JButton("Neue Level Suchen");
 				this.btnLoad.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						
 						switch(loadNewLevel()) {
-							case 0: 	new Alert("Keine neuen Level gefunden!"); break;
-							case 1: 	new Alert("Es wurden neue Level hinzugefügt!"); break;
-							default: 	new Alert("Es wurde mit Fehlern abgeschlossen!"); break;
+							case 0: 	Utils.alert("Keine neuen Level gefunden!"); break;
+							case 1: 	Utils.alert("Es wurden neue Level hinzugefügt!"); break;
+							default: 	Utils.alert("Es wurde mit Fehlern abgeschlossen!"); break;
 						}
 					
 					}
@@ -230,6 +240,7 @@ public class MainFrame extends JFrame{
 	 * @param y y-Koordinate, wo das Spielfenster liegen soll
 	 */
 	public void start(int level, Figure figure, int x, int y) {
+		// Prüft, ob alle nötigen Dateien existieren, um das Level zu starten
 		if(Utils.checkLevel(level)) {
 			this.gameWindow = new Game(level, figure, this, x, y);
 			this.gameWindow.setVisible(true);
@@ -237,7 +248,7 @@ public class MainFrame extends JFrame{
 		} else {
 			this.reloadHighscore();
 			this.setVisible(true);
-			new Alert("Es ist ein Fehler aufgetreten!");
+			Utils.alert("Es ist ein Fehler aufgetreten!");
 		}
 	}
 	
@@ -287,8 +298,10 @@ public class MainFrame extends JFrame{
 			File file = new File("res/level/highscores/"+level+".json");
 			if(file.exists()) {
 				
+				// Ließt Highscore aus json Datei und formt sie in eine Liste aus Spielerobjekten
 				ArrayList<Player> player = new Gson().fromJson( new FileReader(file) , this.playerListType);
 				if(player != null) {
+					// Sortieren, damit schnellster oben steht.
 					player.sort(null);
 					
 					if(player.size() > 0)
@@ -320,6 +333,7 @@ public class MainFrame extends JFrame{
 			ArrayList<Player> allPlayer = new ArrayList<Player>();
 			
 			if(file.exists()) {
+				// Ließt alle Spieler des Highscores aus Datei
 				allPlayer = gson.fromJson(new FileReader( file ), this.playerListType);
 			} else {
 				file.createNewFile();
@@ -328,6 +342,7 @@ public class MainFrame extends JFrame{
 			if(allPlayer == null) allPlayer = new ArrayList<Player>();
 			allPlayer.add(new Player(name, time));
 			
+			// Überschreibt datei mit hinzugefügtem Spieler
 			String json = gson.toJson(allPlayer);
 			
 			BufferedWriter bw = new BufferedWriter(new FileWriter( file ));
@@ -351,7 +366,8 @@ public class MainFrame extends JFrame{
 				
 				ArrayList<Player> playerHighscore = null;
 				File f = new File("res/level/highscores/"+level+".json");
-				if( f.exists() ) { 					
+				if( f.exists() ) { 		
+					// Ließt Spieler über JSon aus Datei und schreibt sie in den Highscore
 					playerHighscore = new Gson().fromJson(new FileReader( new File( "res/level/highscores/"+level+".json" )), playerListType);
 				}
 				this.highscoreTable.setModel(new HighscoreTableModel(playerHighscore));	
@@ -388,8 +404,8 @@ public class MainFrame extends JFrame{
 				allOkay = true;
 				
 			}
-			if(!allOkay) new Alert("Das updaten war nicht erfolgreich!");
-			else new Alert("Update war erfolgreich!");
+			if(!allOkay) Utils.alert("Das updaten war nicht erfolgreich!");
+			else Utils.alert("Update war erfolgreich!");
 			
 		} catch (IOException e) {
 			e.printStackTrace();
