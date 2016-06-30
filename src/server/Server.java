@@ -10,6 +10,11 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
+/**
+ * Server Klasse
+ * Aufgaben sind es, Level-Objekte aus Dateien zu erstellen und diese dem Client zu übergeben.
+ *
+ */
 public class Server implements ServerServiceInterface {
 
 	public Server() throws RemoteException {

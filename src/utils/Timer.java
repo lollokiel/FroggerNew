@@ -2,6 +2,12 @@ package utils;
 
 import frames.Game;
 
+/**
+ * Klasse zum Zeit-Stoppen
+ * Zählt Sekündlich die Sekunden hoch und ändert den Timer im Spielfenster
+ * @author Lollo
+ *
+ */
 public class Timer extends Thread {
 
 	private Game gameFrame;
@@ -11,6 +17,9 @@ public class Timer extends Thread {
 		this.gameFrame = gameFrame;
 	}
 	
+	/*
+	 * Für den Zugriff beim Highscore schreiben
+	 */
 	public int getSeconds() {
 		this.gameFrame.getPlayground().getLock().lock();
 			int returnSec = this.seconds;
@@ -29,12 +38,12 @@ public class Timer extends Thread {
 			}
 
 			this.gameFrame.getPlayground().getLock().lock();
-			
+						
+			if(this.gameFrame.getPlayground().getMeeple().isAlive()) {
 				this.seconds++;
-			
-			if(this.gameFrame.getPlayground().getMeeple().isAlive())
 				this.gameFrame.setTimer(seconds);
-
+			}
+			
 			this.gameFrame.getPlayground().getLock().unlock();
 		}
 	}

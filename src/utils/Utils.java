@@ -12,16 +12,30 @@ import java.util.Iterator;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
+/**
+ * Klasse, die alle möglichen, notwendigen Methoden enthällt, die nicht einer genauen Klasse zugewiesen sind.
+ * Enthält Methode zum...
+ * ... Hintergrundbild formen
+ * ... Datei Einlesen und als String zurück geben
+ * ... Umwandeln der Sekunden in Min:Sek
+ * ... Hinzuügen einer 0 bei Zahlen < 0 für Sekundenanzeige
+ * ... Prüfen auf Vollständigkeit eines Levels
+ * ... extrahieren des Parent-Ordners einer Datei
+ * ... Datei erstellen aus Name, Pfad, und Zeilenliste
+ * ... Alert-Fenster anzeigen
+ * @author Lollo
+ *
+ */
 public class Utils {
 
-	/* 
+	/**
 	 * Erstellt ein BufferedImage von einem übergebenden Pfad und gibt dieses zurück
 	 */
 	public static BufferedImage formTile(String path, int width, int height) throws IOException {
 		return ImageIO.read(Utils.class.getResource(path)).getSubimage(0, 0, width, height);
 	}
 	
-	/*
+	/**
 	 * Ließt eine Datei ein und gibt diese als String zurück
 	 */
 	public static String readFile(String path) {
@@ -49,14 +63,14 @@ public class Utils {
 		return "";
 	}	
 	
-	/*
+	/**
 	 * Gibt einen Timer aus Minuten und Sekunden abhängig einer übergegebenen Sekundenzahl zurück
 	 */
 	public static String getTime(int seconds) {
 		return (int)(seconds/60)+":"+addZero(seconds%60);
 	}
 	
-	/*
+	/**
 	 * Hängt bei Zahlen mit einer Ziffer eine führende 0 an -> 9 = 09
 	 */
 	public static String addZero(int i) {
@@ -66,7 +80,7 @@ public class Utils {
 		return i+"";
 	}
 	
-	/*
+	/**
 	 * Check Level OK
 	 */
 	public static boolean checkLevel(int level) {
@@ -78,7 +92,9 @@ public class Utils {
 		return false;
 	}
 	
-	
+	/**
+	 * Extrahiert Parent-Ordnernamen aus Datei
+	 */
 	public static String getFolder(File file) {
 		File fileParent = file.getParentFile();
 		String pathParent = fileParent.getParent();
@@ -89,6 +105,9 @@ public class Utils {
 		return folder;
 	}
 	
+	/**
+	 * Erstellt eine Datei aus Name, Pfad und Zeilen
+	 */
 	public static void createFile(String name, String path, Iterable<String> lines) {
 		
 			try {
@@ -115,6 +134,10 @@ public class Utils {
 		
 	}
 	
+	/**
+	 * Erstellt eine Alert-Message
+	 * @param message anzuzeigende Nachricht
+	 */
 	public static void alert(String message) {
 		JOptionPane.showMessageDialog(null, message, "Achtung!", JOptionPane.PLAIN_MESSAGE);
 	}

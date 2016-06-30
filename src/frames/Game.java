@@ -54,7 +54,8 @@ public class Game extends JFrame {
 		this.mainframe = frameFrogger;
 		this.figure = figure;
 		this.timer = new Timer(this);
-		
+
+		this.setIconImage(this.mainframe.getSettings().FROG);
 		this.setFocusable(false); // Focus muss auf Spielfeld gelegt werden, KeyEvents
 		this.setResizable(false);
 		this.setTitle("Frogger");

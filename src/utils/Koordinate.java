@@ -1,5 +1,8 @@
 package utils;
 
+/**
+ * "feine" Koordinate, exakte x- und y- Koordinate
+ */
 public class Koordinate {
 
 	private int x;

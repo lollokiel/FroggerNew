@@ -10,6 +10,11 @@ import java.util.Iterator;
 
 import utils.Utils;
 
+/**
+ * Diese Klasse dient als Übertragungsklasse für Level vom Server.
+ * Es fasst ein Level zusammen, in dem es die Levelnummer und alle notwendigen
+ * Leveldateien beinhaltet.
+ */
 public class Level implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -33,18 +38,34 @@ public class Level implements Serializable {
 		this.addFile("res/server/level/objectStructure/"+id+".txt");
 	}
 	
+	/**
+	 * @return Eine Liste aller LevelDateien
+	 */
 	public ArrayList<LevelFile> getFiles() {
-		return files;
+		return this.files;
 	}
 	
+	/**
+	 * @return Level-ID
+	 */
 	public int getId() {
-		return levelId;
+		return this.levelId;
 	}
 	
+	/**
+	 * Fügt eine LevelDatei zum Level hinzu
+	 * @param file LevelDatei, die hinzugefügt werden soll
+	 * @return true, wenn erfolgreich; false, wenn nicht
+	 */
 	public boolean addFile(LevelFile file) {
 		return this.files.add(file);
 	}
 	
+	/**
+	 * Erstellt eine neue LevelFile aus einem Pfad und fügt diese dem Level hinzu
+	 * @param path Pfad zur Datei, die dem Level hinzugefügt werden soll
+	 * @return true, wenn erfolgreich hinzugefügt; false, wenn nicht
+	 */
 	public boolean addFile(String path) {
 		
 		try {
@@ -75,6 +96,12 @@ public class Level implements Serializable {
 		return false;
 	}
 	
+	
+	/**
+	 * Prüft, ob in dem Level eine Datei vorhanden ist
+	 * @param name Name der Datei, die geprüft werden soll
+	 * @return true, wenn Datei vorhanden; false, wenn nicht
+	 */
 	public boolean hasFile(String name) {
 		
 		boolean found = false;

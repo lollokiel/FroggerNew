@@ -61,21 +61,10 @@ public class Street extends ActiveRow {
 			
 			try {
 				
-				// Thread unterbrechen und nach zufällig berechneter Zeit t wieder ausführen
-				int frequenzZeit = (int) (newCar.getWidth()/(this.getSpeed()*40.0)*1000); // Dauer für Strecke des eigenen Autos
-				int t = frequenzZeit;  // Mindestzeit zum Neuhinzufügen = frequenzZeit, um Überschneidungen zu verhindern 
-			
-				int minDifference = (this.getWdhSpeed()*2)-1; // Mindestens 1 Autolänge Abstand
-				int maxDifference =  minDifference+2; // Maximal Min +2
-				
-				int minT = t*minDifference;
-				int maxT = t*maxDifference;
-				int diffT = maxT-minT;
-				int randT = (int)(Math.random()*diffT);				
-
-				t += minT + randT;
+				int t = this.getTime(newCar);
 				
 				Thread.sleep(t);
+				
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
