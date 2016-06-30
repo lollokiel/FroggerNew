@@ -62,6 +62,14 @@ public class Settings {
 	public BufferedImage GAMEOVER;
 	public BufferedImage LEVELCOMPLETE;
 
+	/*
+	 * Die Messages
+	 */
+	public static String waterMsg = "Wasser scheint nicht dein bester Freund zu sein!";
+	public static String streetMsg = "Da hast du wohl ein Auto übersehen!";
+	public static String pitMsg = "Du bist in ein unsichtbares Loch gefallen!";
+	public static String lilyMsg = "Die Wasserrose konnte dein Gewicht nicht mehr tragen!";
+	public static String leaveMsg = "Du darfst das Spielfeld nicht verlassen!";
 	
 	public Settings() {	
 		

@@ -63,6 +63,7 @@ public class Playground extends JPanel {
 	private ArrayList<River> 			rivers 		= new ArrayList<River>();
 		
 	private JLabel countdownLabel = new JLabel();
+	private JLabel looseText;
 	
 	public Playground(Game gameFrame) {
 			
@@ -226,11 +227,11 @@ public class Playground extends JPanel {
 								if(meeple.getMoveableObject() != null) {
 									if(newX - meeple.getMoveableObject().getX() < 0 || (newX + Settings.FIELDSIZE) - (meeple.getMoveableObject().getX()+meeple.getMoveableObject().getWidth()) > 0) {
 										this.playSound(Settings.waterSound);
-										die(1500);
+										die(1500, Settings.waterMsg);
 									}
 								} else {
 									this.playSound(Settings.waterSound);
-									die(1500);
+									die(1500, Settings.waterMsg);
 								}
 								meeple.moveTo(newX, meeple.getY());
 							} else {
@@ -266,7 +267,7 @@ public class Playground extends JPanel {
 									} else {
 										newX = (int)(this.meeple.getMiddleX()/Settings.FIELDSIZE) *Settings.FIELDSIZE;
 										this.playSound(Settings.waterSound);
-										die(1500);
+										die(1500, Settings.waterMsg);
 									}
 								} else {
 									newX = meeple.getMoveableObject().getX()+(Settings.FIELDSIZE)*
@@ -285,11 +286,11 @@ public class Playground extends JPanel {
 							}
 						}		
 						
-						//Check ob auf Loch oder Wasserrose
+						//Check ob auf Loch
 						for(FieldObject obj : getObjectStructure()) {
 							if(obj.getClass() == Pit.class) {
 								if(obj.getFieldKoordinate().isSame(meeple.getFieldkoordinate())) {
-									die(0);
+									die(0, Settings.pitMsg);
 								}
 							}
 						}						
@@ -397,7 +398,7 @@ public class Playground extends JPanel {
 	 * - Keine neuen Elemente werden hinzugefügt
 	 * - Abspielen des Verliertons nach n ms, abhängig, ob noch ein anderer Ton gespielt werden soll
 	 */
-	public void die(int msToPlaySound) {
+	public void die(int msToPlaySound, String looseMsg) {
 		this.meeple.setAlive(false);
 		
 		new Thread( new Runnable() {
@@ -424,6 +425,14 @@ public class Playground extends JPanel {
 		});
 		btnRestart.setBounds((Settings.FIELDSIZE * Settings.COLS -btnWidth) / 2, 450, btnWidth, 50);
 		this.add(btnRestart);
+		
+		this.looseText = new JLabel(looseMsg);
+		this.looseText.setForeground(Color.white);
+		this.looseText.setBounds(0,100,Settings.PG_WIDTH, 40);
+		this.looseText.setFont(new Font("Comic Sans MS", Font.PLAIN, 20));
+		
+		this.looseText.setHorizontalAlignment(JLabel.CENTER);
+		this.add(this.looseText);
 	}
 	
 	/*

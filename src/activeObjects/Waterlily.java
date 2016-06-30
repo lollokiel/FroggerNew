@@ -45,7 +45,7 @@ public class Waterlily extends FieldObject implements Runnable {
 				if(this.playground.getMeeple().getFieldkoordinate().isSame(this.getFieldKoordinate())) {
 					this.playground.removeWaterlily(this);
 					this.playground.playSound(Settings.waterSound);
-					this.playground.die(1500);
+					this.playground.die(1500, Settings.lilyMsg);
 					this.playground.repaint();
 				}
 			}
