@@ -87,4 +87,24 @@ public abstract class ActiveRow extends Thread {
 		return this.movableObjects;
 	}
 	
+	/**
+	 * Berechnet die Zeit zur Wiederholung
+	 * @param obj zuletzt hinzugefügtes Objekt
+	 * @return Zeit, die gewartet werden soll
+	 */
+	protected int getTime(MovableObject obj) {
+		int frequenzZeit = (int) (obj.getWidth()/(this.getSpeed()*40.0)*1000); // Dauer für Strecke des eigenen Autos
+		int t = frequenzZeit; // Mindestzeit zum Neuhinzufügen = frequenzZeit, um Überschneidungen zu verhindern 
+	
+		int minDifference = (this.getWdhSpeed()*2)-1; // Mindestens 1 Autolänge Abstand
+		int maxDifference =  minDifference+2; // Maximal Min +2
+		
+		int minT = frequenzZeit*minDifference;
+		int maxT = frequenzZeit*maxDifference;
+		int diffT = maxT-minT;
+		int randT = (int)(Math.random()*diffT);				
+
+		t += minT + randT;
+		return t;
+	}
 }

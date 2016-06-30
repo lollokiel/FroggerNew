@@ -6,6 +6,10 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
 
+/**
+ * Diese Klasse gilt als Schnittstelle zum Server. In dieser Klasse wird die Verbindung zum Server aufgebaut,
+ * und Anfragen an den Server gestellt.
+ */
 public class Client {
 
 	Registry registry;

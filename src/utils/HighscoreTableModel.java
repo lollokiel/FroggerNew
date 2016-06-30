@@ -4,6 +4,14 @@ import java.util.Iterator;
 
 import javax.swing.table.AbstractTableModel;
 
+/**
+ * Erweitert AbstractTableModel
+ * Zum Realisieren des Highscores enthält diese Klasse eine Liste mit 
+ * Player Objekten, die in der Tabelle angezeigt werden.
+ * Notwendige Methoden werden hier überschrieben.
+ * @author Lollo
+ *
+ */
 public class HighscoreTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = 1L;

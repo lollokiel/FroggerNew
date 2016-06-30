@@ -25,7 +25,7 @@ public class Waterlily extends FieldObject implements Runnable {
 	/*
 	 * Bei Eintritt auf Wasserrose wird Timer gestartet, nach 3 Sekunden verschwindet Sie und Spieler stirbt
 	 * Im Takt von 300 ms, da sonst ggf. Probleme auftreten, wenn Spieler kurz Rose verlässt und sofort wieder betritt,
-	 * ggf. wird dabei der Thread nicht gelöscht, sondern läuft weiter. Der Timer wird also ggf. nicht auf 3 Sek. gesetzt.
+	 * ggf. wird dabei der Thread nicht gelöscht, sondern läuft weiter. Der Timer wird also ggf. nicht auf 3 Sek. zurückgesetzt.
 	 */
 	@Override
 	public void run() {

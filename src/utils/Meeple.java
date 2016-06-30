@@ -6,6 +6,17 @@ import activeObjects.FieldObject;
 import activeObjects.MovableObject;
 import frames.Playground;
 
+/**
+ * Spielfiguren Objekt
+ * Enthält
+ * - Position
+ * - Lebenszustand
+ * - Hintergrundbild
+ * der Spielfigur.
+ * Des Weiteren realisiert es Bewegungen
+ * @author Lollo
+ *
+ */
 public class Meeple {
 
 	private int x;
@@ -166,7 +177,7 @@ public class Meeple {
 	}
 	
 	/**
-	 * 
+	 * Gibt die Position der Spielgur zurück
 	 * @return Grobe Koordinate
 	 */
 	public FieldKoordinate getFieldkoordinate() {

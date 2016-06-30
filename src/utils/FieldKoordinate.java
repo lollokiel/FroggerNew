@@ -1,5 +1,10 @@
 package utils;
 
+/**
+ * Feld-Koordinate, oder auch "grobe" Koordinate
+ * Richtet sich im Gegensatz zur Klasse "Koordinate" nicht nach genauen Pixeln,
+ * sondern nach Kacheln auf dem Spielfeld. 
+ */
 public class FieldKoordinate {
 
 	private int row;
@@ -13,6 +18,7 @@ public class FieldKoordinate {
 		this.col = col;
 	}
 	
+	// Konstruktur um aus einer Koordinate zu erstellen; Rundet ggf. ab
 	public FieldKoordinate(Koordinate koordinate) {
 		this.row = (int)(koordinate.getY() / Settings.FIELDSIZE);
 		this.col = (int)(koordinate.getX() / Settings.FIELDSIZE);
@@ -44,15 +50,25 @@ public class FieldKoordinate {
 	/*
 	 * Other
 	 */
+	
+	/**
+	 * Wandelt von "grober" in "feine" Koordinate um
+	 */
 	public Koordinate zuKoordinate() {
 		return new Koordinate(this.col*Settings.FIELDSIZE, this.row * Settings.FIELDSIZE );
 	}
 	
+	/**
+	 * Prüft, ob übergebene Koordinate gleiche Reihen und Zeilen-Werte hat.
+	 * @param fieldKoordinate Zu vergleichende Koordinate
+	 * @return true, wenn gleich; false, wenn unterschiedlich
+	 */
 	public boolean isSame(FieldKoordinate fieldKoordinate) {
-		if(fieldKoordinate.getCol() == this.getCol()) 
-			if(fieldKoordinate.getRow() == this.getRow()) 
+		if(fieldKoordinate.getCol() == this.getCol()) {
+			if(fieldKoordinate.getRow() == this.getRow()) {
 				return true;
-	
+			}
+		}
 		return false;
 	}
 }

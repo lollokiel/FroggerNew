@@ -39,6 +39,11 @@ import utils.Meeple;
 import utils.Settings;
 import utils.Utils;
 
+/**
+ * Diese Klasse umfasst das Spielfelt des Spiels
+ * Es beinhaltet alle nötigen Methoden und Objekte, die für das 
+ * eigentliche Spielen notwendig sind
+ */
 public class Playground extends JPanel {
 
 	private static final long serialVersionUID = 1L;
@@ -63,7 +68,6 @@ public class Playground extends JPanel {
 	private ArrayList<River> 			rivers 		= new ArrayList<River>();
 		
 	private JLabel countdownLabel = new JLabel();
-	private JLabel looseText;
 	
 	public Playground(Game gameFrame) {
 			
@@ -185,17 +189,18 @@ public class Playground extends JPanel {
 			// 37 - Links; 38 - Oben; 39 - Rechts; 40 - Links
 			if(e.getKeyCode() >=37 && e.getKeyCode() <= 40) { 
 				
-				// Wenn Startcountdown abgelaufen ist
+				// Wenn Startcountdown abgelaufen ist, sonst keine Bewegung erlaubt
 				if(countdown.seconds<=0) {
+					
+					// Bei der ersten Bewegung Timer starten
 					if(!meepleMoved) {
-						// Starte Stoppuhr
 						new Thread(gameFrame.getTimer()).start();
 						meepleMoved = true;
 					}
 									
 					lock.lock();
 					
-						// Definiere neue Reihe
+						// Definiere, in welche Reihe sich die Figur bewegen will
 						int newRow = meeple.getRow();
 						if(e.getKeyCode() == 38 && meeple.getRow() > 0) {
 							newRow--;
@@ -204,6 +209,7 @@ public class Playground extends JPanel {
 							newRow++;
 						}
 						
+						// Guckt, ob zukünftige Reihe ein Fluss ist
 						River riverTo = null;
 						for(River river : getRiver()) {
 							if(river.getRow() == newRow) {
@@ -215,8 +221,10 @@ public class Playground extends JPanel {
 						// Spielfigur geht auf Fluss
 						if(riverTo != null) { 
 							
+							// Bei rechts-links Bewegung
 							if(e.getKeyCode() == 37 || e.getKeyCode() == 39) {
-															
+											
+								// Neue x-Koordinate festlegen
 								int newX = meeple.getX();
 								if(e.getKeyCode() == 37) {
 									newX -= Settings.FIELDSIZE;
@@ -224,34 +232,48 @@ public class Playground extends JPanel {
 									newX += Settings.FIELDSIZE;
 								}
 								
+								// Wenn auf einem Holzstamm, dann besondere Bewegung auf Holzstamm
 								if(meeple.getMoveableObject() != null) {
-									if(newX - meeple.getMoveableObject().getX() < 0 || (newX + Settings.FIELDSIZE) - (meeple.getMoveableObject().getX()+meeple.getMoveableObject().getWidth()) > 0) {
+									// Wenn Spielfigur den Stamm nach r/l verlässt, wird Spiel beendet
+									if(	(newX - meeple.getMoveableObject().getX() < 0) || 
+										(newX + Settings.FIELDSIZE) - (meeple.getMoveableObject().getX()+
+												meeple.getMoveableObject().getWidth()) > 0) {
 										this.playSound(Settings.waterSound);
 										die(1500, Settings.waterMsg);
 									}
-								} else {
+								} else { //Wenn Spielfigur sich auf dem Wasser befindet, und nicht auf Stamm,
+									// und sich nach rechts-links bewegt, automatisch ins Wasser
 									this.playSound(Settings.waterSound);
 									die(1500, Settings.waterMsg);
 								}
 								meeple.moveTo(newX, meeple.getY());
+							
+							// Bei Oben-Unten Bewegung
 							} else {
 								
+								// Wenn vor Bewegung auf Objekt, Verknüpfung zu Objekt lösen
 								if(meeple.getMoveableObject() != null) {
 									meeple.getMoveableObject().setMeepleOn(null);
 									meeple.setMoveableObject(null);
 								}
 								
+								// Prüfen ob bei neuer Position Objekt vorhanden ist
 								for(MovableObject obj : riverTo.getMoveableObjects()) {
 									if(obj.getX() < meeple.getMiddleX() && obj.getX() + obj.getWidth() > meeple.getMiddleX()) {
-										meeple.setMoveableObject(obj);
+										meeple.setMoveableObject(obj); // Verknüpfung zu Objekt herstellen
 										break;
 									}
 								}
 								
 								int newX = 0;
+								// Wenn auf Fluss, aber nicht auf Stamm, prüfen ob Wasserrose
 								if(meeple.getMoveableObject() == null) {
 									Waterlily goToLily = null;
+									
+									// Zukünftige Position in grober Koordinate darstellen
 									FieldKoordinate fkGoTo = new FieldKoordinate(new Koordinate(meeple.getMiddleX(), newRow*Settings.FIELDSIZE));
+					
+									// Durch Wasserrosen gehen und prüfen, ob neue Position auf Wasserrose liegt
 									for(FieldObject obj : getObjectStructure()) {
 										if(obj.getClass() == Waterlily.class) {
 											
@@ -261,14 +283,20 @@ public class Playground extends JPanel {
 											}
 										}
 									}
+									
+									// Wenn auf eine Wasserrose, dann neues x Berechnen und Wasserrose "starten"
 									if(goToLily != null) {
 										newX = fkGoTo.getCol()*Settings.FIELDSIZE;
 										new Thread(goToLily).start();
+										
+									// Ansonsten Spiel vorbei und sterben
 									} else {
 										newX = (int)(this.meeple.getMiddleX()/Settings.FIELDSIZE) *Settings.FIELDSIZE;
 										this.playSound(Settings.waterSound);
 										die(1500, Settings.waterMsg);
 									}
+									
+								// Wenn Bewegung auf ein Stamm: Position des Stammes einnehmen
 								} else {
 									newX = meeple.getMoveableObject().getX()+(Settings.FIELDSIZE)*
 											((int)((meeple.getMiddleX()-meeple.getMoveableObject().getX()) / Settings.FIELDSIZE));																
@@ -295,6 +323,7 @@ public class Playground extends JPanel {
 							}
 						}						
 						
+						// Wenn oberste Reihe : gewonnen
 						if(meeple.getY() == 0) {
 							win();
 						}
@@ -303,10 +332,8 @@ public class Playground extends JPanel {
 					this.repaint();
 					
 				}
-			
 			} 
-		}
-		
+		}	
 	}
 	
 	/*
@@ -316,20 +343,21 @@ public class Playground extends JPanel {
 		this.win = true;
 		this.meeple.setAlive(false);
 		this.playSound(Settings.winSound);
-				
+		
+		Font f2 = new Font("Arial", Font.ITALIC , 20);
+		
 		JLabel wonNameLabel = new JLabel("Dein Name:");
 		wonNameLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		Font f2 = new Font("Arial", Font.ITALIC , 20);
 		wonNameLabel.setFont(f2);
 		wonNameLabel.setForeground(Color.WHITE);
 		wonNameLabel.setBounds(140, 505, Settings.FIELDSIZE*Settings.COLS, 100);
 		this.add(wonNameLabel);
 		
-		int btnWidth = 200;
 		JTextField wonNameField = new JTextField();
 		wonNameField.setBounds(260, 540, 200, 25);
 		this.add(wonNameField);
 		
+		// Prüfen, ob es ein nächstes Level gibt
 		boolean hasNext = false;
 		ArrayList<Integer> levelList = this.gameFrame.getMainFrame().readLevel();
 		for(int i = 0; i < levelList.size(); i++) {
@@ -339,20 +367,23 @@ public class Playground extends JPanel {
 			}
 		}
 		
+		// Wenn nächstes Level vorhanden: Butten anzeigen
 		if(hasNext) {
 			JButton btnNextLevel = new JButton("Nächstes Level");
 			btnNextLevel.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					
+					// Wenn Name eingegeben zur Highscore Liste hinzufügen
 					if(wonNameField.getText().length() > 0)
 						gameFrame.getMainFrame().addPlayerToHighscore(gameFrame.getLevel(), wonNameField.getText(), gameFrame.getSeconds() );
 					
 					gameFrame.setVisible(false);
+					// Starte nächstes Level
 					gameFrame.getMainFrame().start(gameFrame.getLevel()+1, gameFrame.getFigure(), gameFrame.getBounds().x, gameFrame.getBounds().y);
 				}
 			});
-			btnNextLevel.setBounds((Settings.FIELDSIZE * Settings.COLS -btnWidth) / 2, 600, btnWidth, 50);
+			btnNextLevel.setBounds((Settings.FIELDSIZE * Settings.COLS -200) / 2, 600, 200, 50);
 			this.add(btnNextLevel);
 		}
 		
@@ -361,14 +392,16 @@ public class Playground extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
+				// Wenn Name eingegeben, dann zum Highscore hinzufügen
 				if(wonNameField.getText().length() > 0)
 					gameFrame.getMainFrame().addPlayerToHighscore(gameFrame.getLevel(), wonNameField.getText(), gameFrame.getSeconds() );
 
 				gameFrame.setVisible(false);
+				// Level neu starten
 				gameFrame.getMainFrame().start(gameFrame.getLevel(), gameFrame.getFigure(), gameFrame.getBounds().x, gameFrame.getBounds().y);
 			}
 		});
-		btnRestart.setBounds((int)((Settings.FIELDSIZE * Settings.COLS -btnWidth) * (1/10.0)), 600, 100, 50);
+		btnRestart.setBounds((int)((Settings.FIELDSIZE * Settings.COLS -200) * (1/10.0)), 600, 100, 50);
 		this.add(btnRestart);
 		
 		JButton btnSave = new JButton("Speichern");
@@ -376,9 +409,11 @@ public class Playground extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
+				// Wenn Name eingegeben, dann zum Highscore hinzufügen
 				if(wonNameField.getText().length() > 0)
 					gameFrame.getMainFrame().addPlayerToHighscore(gameFrame.getLevel(), wonNameField.getText(), gameFrame.getSeconds() );
 				
+				// Menüfenster anzeigen und dabei Highscore reloaden
 				gameFrame.setVisible(false);
 				gameFrame.getMainFrame().reloadHighscore();
 				gameFrame.getMainFrame().setVisible(true);
@@ -399,8 +434,10 @@ public class Playground extends JPanel {
 	 * - Abspielen des Verliertons nach n ms, abhängig, ob noch ein anderer Ton gespielt werden soll
 	 */
 	public void die(int msToPlaySound, String looseMsg) {
+		// Setzt den Status der Spielfigur auf nicht-lebendig
 		this.meeple.setAlive(false);
 		
+		// Thread zum warten, falls ggf. zwei Töne abgespielt werden
 		new Thread( new Runnable() {
 			@Override
 			public void run() {
@@ -408,31 +445,30 @@ public class Playground extends JPanel {
 					Thread.sleep(msToPlaySound);
 					playSound(Settings.dieSound);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		}).start();
-		
-		int btnWidth = 200;
+
 		JButton btnRestart = new JButton("Neu Starten");
 		btnRestart.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				gameFrame.setVisible(false);
+				// Spiel neustarten
 				gameFrame.getMainFrame().start(gameFrame.getLevel(), gameFrame.getFigure(), gameFrame.getBounds().x, gameFrame.getBounds().y);
 			}
 		});
-		btnRestart.setBounds((Settings.FIELDSIZE * Settings.COLS -btnWidth) / 2, 450, btnWidth, 50);
+		btnRestart.setBounds((Settings.FIELDSIZE * Settings.COLS - 200) / 2, 450, 200, 50);
 		this.add(btnRestart);
 		
-		this.looseText = new JLabel(looseMsg);
-		this.looseText.setForeground(Color.white);
-		this.looseText.setBounds(0,100,Settings.PG_WIDTH, 40);
-		this.looseText.setFont(new Font("Comic Sans MS", Font.PLAIN, 20));
-		
-		this.looseText.setHorizontalAlignment(JLabel.CENTER);
-		this.add(this.looseText);
+		// Grund des Sterbens angeben
+		JLabel looseText = new JLabel(looseMsg);
+		looseText.setForeground(Color.white);
+		looseText.setBounds(0,100,Settings.PG_WIDTH, 40);
+		looseText.setFont(new Font("Comic Sans MS", Font.PLAIN, 20));
+		looseText.setHorizontalAlignment(JLabel.CENTER);
+		this.add(looseText);
 	}
 	
 	/*
@@ -443,10 +479,13 @@ public class Playground extends JPanel {
 		 * Ließt Datei für die Hintergrundstruktur und erstellt ein Array mit Reihentypen
 		 */
 		private void readBackgroundStructure() {
+			
+			// Array aller Zeilen der Hintergrundstruktur werden gelesen
 			String[] backgroundStructureLines = Utils.readFile("/level/backgroundStructure/"+this.level+".txt").split("\n");
+			
 			int i = 0;
 			for(String rowString : backgroundStructureLines) {
-				String[] rowSettings = rowString.split("\\s");
+				String[] rowSettings = rowString.split("\\s"); // Bei Leerzeichen trennen
 				switch(rowSettings[0]) {
 					case "2": this.addRiver(rowSettings, i); break;
 					case "3": this.addStreet(rowSettings, i); break;
@@ -460,12 +499,14 @@ public class Playground extends JPanel {
 		 * Ließt Datei für die Objektstruktur und erstellt für jeden Objekttyp ein Array mit Objekten
 		 */
 		private void readObjectStructure() {
+			// Array aller Zeilen der Objektstruktur
 			String[] objectStructureLines = Utils.readFile("/level/objectStructure/"+this.level+".txt").split("\n");
 			
 			for(int row = 0; row < objectStructureLines.length; row++) {
-				String[] rowStructure = objectStructureLines[row].split(",");
+				String[] rowStructure = objectStructureLines[row].split(","); // Teilt Zeile bei Komma in einzelne Elemente
 				for(int col = 0; col < rowStructure.length; col++) {
 					int objectType = Integer.parseInt(rowStructure[col]);
+					// Fügt je nach Angabe einen Baum, ein Loch oder eine Wasserrose an die Position
 					if(objectType == 1) {
 						this.trees.add(new Tree(new FieldKoordinate(col, row), this.settings.TREE));
 					} else

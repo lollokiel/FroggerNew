@@ -4,6 +4,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Sämtliche Einstellungen, die im ganzen Programm gebraucht werden.
+ */
 public class Settings {
 
 	/*
@@ -81,7 +84,7 @@ public class Settings {
 			
 			this.GRASS 		= Utils.formTile("/backgrounds/grass.png", 35, 35);
 			this.WATER 		= Utils.formTile("/backgrounds/water.png", 35, 35);
-			this.STREET 		= Utils.formTile("/backgrounds/street.png", 35, 35);
+			this.STREET 	= Utils.formTile("/backgrounds/street.png", 35, 35);
 				
 			this.TREE 		= Utils.formTile("/objects/tree.png", 35, 35);
 			this.WATERLILY 	= Utils.formTile("/objects/waterlily.png", 35, 35);

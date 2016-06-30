@@ -1,5 +1,9 @@
 package utils;
 
+/**
+ * Hilfsklasse für Table-Model.
+ * 1 Playerobjekt = 1 Zeile im Highscore. Enthällt Namen und Zeit des Spielers
+ */
 public class Player implements Comparable<Player> {
 
 	private String name;
