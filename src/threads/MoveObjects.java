@@ -1,5 +1,7 @@
 package threads;
 
+import java.util.ArrayList;
+
 import activeObjects.MovableObject;
 import activeRows.ActiveRow;
 import activeRows.Street;
@@ -21,6 +23,7 @@ public class MoveObjects implements Runnable {
 			this.playground.getLock().lock();
 			
 				for(ActiveRow row : this.playground.getRows()) {
+					ArrayList<MovableObject> toDelete = new ArrayList<>();
 					for(MovableObject obj : row.getMoveableObjects()) {
 						if(obj.getMeeple() != null) { // Mitbewegen der Spielfigur auf Stamm
 							obj.getMeeple().raiseX(row.getSpeed()*row.getDirection()); // Position d. Spielfigur verschoben
@@ -30,7 +33,12 @@ public class MoveObjects implements Runnable {
 						}
 						// Position des bewegenden Objektes verschoben
 						obj.raiseX(((row.getSpeed())*row.getDirection()));
+						if(obj.getX()>Settings.PG_WIDTH+5 || obj.getX() < -75) toDelete.add(obj);
 					}
+					for(MovableObject objToDelete : toDelete) {
+						row.removeMovableObject(objToDelete);
+					}
+					System.out.println(row.getMoveableObjects());
 				}
 				
 			this.playground.getLock().unlock();
@@ -55,7 +63,7 @@ public class MoveObjects implements Runnable {
 				}
 			
 			this.playground.getLock().unlock();
-			
+		
 			try {
 				Thread.sleep(25);
 			} catch (InterruptedException e) {
