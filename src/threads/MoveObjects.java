@@ -33,12 +33,13 @@ public class MoveObjects implements Runnable {
 						}
 						// Position des bewegenden Objektes verschoben
 						obj.raiseX(((row.getSpeed())*row.getDirection()));
-						if(obj.getX()>Settings.PG_WIDTH+5 || obj.getX() < -75) toDelete.add(obj);
+						if(obj.getX()>Settings.PG_WIDTH+5 || obj.getX() < -75) {
+							toDelete.add(obj);
+						}
 					}
 					for(MovableObject objToDelete : toDelete) {
 						row.removeMovableObject(objToDelete);
 					}
-					System.out.println(row.getMoveableObjects());
 				}
 				
 			this.playground.getLock().unlock();
